@@ -1,42 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Hexa.Web.DB;
 using Hexa.Web.Models.oatuh;
+using Hexa.Web.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Hexa.Web.Controllers
 {
-    public class ApplicationController : Controller
+    [Authorize]
+    public class ApplicationsController : Controller
     {
-        private readonly HexaDbContext _context;
+        private readonly HexaDbContext _dbContext;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public ApplicationController(HexaDbContext context)
-        {
-            _context = context;
+        public ApplicationsController(HexaDbContext dbContext, IHttpContextAccessor httpContext)
+        { 
+            _dbContext = dbContext;
+            _httpContext = httpContext;
         }
+
 
         // GET: Applications
         public async Task<IActionResult> Index()
         {
-              return _context.Applications != null ? 
-                          View(await _context.Applications.ToListAsync()) :
-                          Problem("Entity set 'HexaDbContext.Applications'  is null.");
+              return _dbContext.Applications != null ? 
+                          View(await _dbContext.Applications.ToListAsync()) :
+                          Problem("Entity set 'HexaDbdbContext.Applications'  is null.");
         }
 
         // GET: Applications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Applications == null)
+            if (id == null || _dbContext.Applications == null)
             {
                 return NotFound();
             }
 
-            var application = await _context.Applications
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var application = await _dbContext.Applications
+                .FirstOrDefaultAsync(m => m.ApplicationId == id);
             if (application == null)
             {
                 return NotFound();
@@ -56,26 +57,34 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Details,Url,Logo")] Application application)
+        public async Task<IActionResult> Create([FromBody] Application model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(application);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _dbContext.Add(new Application
+                {
+                    ApplicationId = model.ApplicationId,
+                    Name = model.Name,
+                    Details = model.Details,
+                    UserId = _httpContext.HttpContext.Session.Get<int>("User Id"),
+                    Url = model.Url,
+                    Logo = model.Logo
+                });
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction(actionName: "Index", controllerName:"Applications");
             }
-            return View(application);
+            return View(model);
         }
 
         // GET: Applications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Applications == null)
+            if (id == null || _dbContext.Applications == null)
             {
                 return NotFound();
             }
 
-            var application = await _context.Applications.FindAsync(id);
+            var application = await _dbContext.Applications.FindAsync(id);
             if (application == null)
             {
                 return NotFound();
@@ -88,9 +97,9 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Details,Url,Logo")] Application application)
+        public async Task<IActionResult> Edit(int id, [Bind("ApplicationId,Name,Details,Url,Logo,UserId")] Application application)
         {
-            if (id != application.Id)
+            if (id != application.ApplicationId)
             {
                 return NotFound();
             }
@@ -99,12 +108,12 @@ namespace Hexa.Web.Controllers
             {
                 try
                 {
-                    _context.Update(application);
-                    await _context.SaveChangesAsync();
+                    _dbContext.Update(application);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ApplicationExists(application.Id))
+                    if (!ApplicationExists(application.ApplicationId))
                     {
                         return NotFound();
                     }
@@ -121,13 +130,13 @@ namespace Hexa.Web.Controllers
         // GET: Applications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Applications == null)
+            if (id == null || _dbContext.Applications == null)
             {
                 return NotFound();
             }
 
-            var application = await _context.Applications
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var application = await _dbContext.Applications
+                .FirstOrDefaultAsync(m => m.ApplicationId == id);
             if (application == null)
             {
                 return NotFound();
@@ -141,23 +150,23 @@ namespace Hexa.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Applications == null)
+            if (_dbContext.Applications == null)
             {
-                return Problem("Entity set 'HexaDbContext.Applications'  is null.");
+                return Problem("Entity set 'HexaDbdbContext.Applications'  is null.");
             }
-            var application = await _context.Applications.FindAsync(id);
+            var application = await _dbContext.Applications.FindAsync(id);
             if (application != null)
             {
-                _context.Applications.Remove(application);
+                _dbContext.Applications.Remove(application);
             }
             
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ApplicationExists(int id)
         {
-          return (_context.Applications?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_dbContext.Applications?.Any(e => e.ApplicationId == id)).GetValueOrDefault();
         }
     }
 }

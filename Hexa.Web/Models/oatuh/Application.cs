@@ -1,13 +1,20 @@
-﻿namespace Hexa.Web.Models.oatuh
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Hexa.Web.Models.oatuh
 {
     public class Application
     {
-        public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ApplicationId { get; set; }
+
         public string Name { get; set; }
         public string Details { get; set; }
         public string Url { get; set; }
         public string Logo { get; set; }
 
-        public List<Application> ApplicationList { get; } = new();
+        public int UserId { get; set; }
+        public User User { get; }       
     }
 }

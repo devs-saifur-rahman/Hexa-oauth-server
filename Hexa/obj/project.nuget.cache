@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "MkB/xhGYsSvaGARmC1rmwauES0XEQuKqYHVLQmPgvZZ2OBvvo/95haryOud3Ghek3EVOHo70FupSlM+9co8IOg==",
+  "dgSpecHash": "48VOztM7oxgwgcioKbA9/4r2XAovo28qG0kbOucLsPab3d8yIGN27UviB52LX5Ol86RFZIdYzJsAvW+Uw3nHjA==",
   "success": true,
-  "projectFilePath": "D:\\Playground\\Oauth\\Hexa\\Hexa\\Hexa.csproj",
+  "projectFilePath": "C:\\playground\\Auth\\Hexa\\Hexa\\Hexa.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

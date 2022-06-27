@@ -10,11 +10,11 @@ using Hexa.Web.Models.oatuh;
 
 namespace Hexa.Web.Controllers
 {
-    public class ClientSecretController : Controller
+    public class ClientSecretsController : Controller
     {
         private readonly HexaDbContext _context;
 
-        public ClientSecretController(HexaDbContext context)
+        public ClientSecretsController(HexaDbContext context)
         {
             _context = context;
         }
@@ -22,9 +22,8 @@ namespace Hexa.Web.Controllers
         // GET: ClientSecrets
         public async Task<IActionResult> Index()
         {
-              return _context.ClientSecrets != null ? 
-                          View(await _context.ClientSecrets.ToListAsync()) :
-                          Problem("Entity set 'HexaDbContext.ClientSecrets'  is null.");
+            var hexaDbContext = _context.ClientSecrets.Include(c => c.Application);
+            return View(await hexaDbContext.ToListAsync());
         }
 
         // GET: ClientSecrets/Details/5
@@ -36,7 +35,8 @@ namespace Hexa.Web.Controllers
             }
 
             var clientSecret = await _context.ClientSecrets
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .Include(c => c.Application)
+                .FirstOrDefaultAsync(m => m.ClientSecretID == id);
             if (clientSecret == null)
             {
                 return NotFound();
@@ -48,6 +48,7 @@ namespace Hexa.Web.Controllers
         // GET: ClientSecrets/Create
         public IActionResult Create()
         {
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,AppID,ClientID,Secret,IsActive")] ClientSecret clientSecret)
+        public async Task<IActionResult> Create([Bind("ClientSecretID,ClientID,Secret,IsActive,ApplicationID")] ClientSecret clientSecret)
         {
             if (ModelState.IsValid)
             {
@@ -64,6 +65,7 @@ namespace Hexa.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", clientSecret.ApplicationID);
             return View(clientSecret);
         }
 
@@ -80,6 +82,7 @@ namespace Hexa.Web.Controllers
             {
                 return NotFound();
             }
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", clientSecret.ApplicationID);
             return View(clientSecret);
         }
 
@@ -88,9 +91,9 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,AppID,ClientID,Secret,IsActive")] ClientSecret clientSecret)
+        public async Task<IActionResult> Edit(int id, [Bind("ClientSecretID,ClientID,Secret,IsActive,ApplicationID")] ClientSecret clientSecret)
         {
-            if (id != clientSecret.ID)
+            if (id != clientSecret.ClientSecretID)
             {
                 return NotFound();
             }
@@ -104,7 +107,7 @@ namespace Hexa.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClientSecretExists(clientSecret.ID))
+                    if (!ClientSecretExists(clientSecret.ClientSecretID))
                     {
                         return NotFound();
                     }
@@ -115,6 +118,7 @@ namespace Hexa.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", clientSecret.ApplicationID);
             return View(clientSecret);
         }
 
@@ -127,7 +131,8 @@ namespace Hexa.Web.Controllers
             }
 
             var clientSecret = await _context.ClientSecrets
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .Include(c => c.Application)
+                .FirstOrDefaultAsync(m => m.ClientSecretID == id);
             if (clientSecret == null)
             {
                 return NotFound();
@@ -157,7 +162,7 @@ namespace Hexa.Web.Controllers
 
         private bool ClientSecretExists(int id)
         {
-          return (_context.ClientSecrets?.Any(e => e.ID == id)).GetValueOrDefault();
+          return (_context.ClientSecrets?.Any(e => e.ClientSecretID == id)).GetValueOrDefault();
         }
     }
 }
