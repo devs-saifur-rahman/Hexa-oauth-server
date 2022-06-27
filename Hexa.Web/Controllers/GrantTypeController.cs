@@ -10,11 +10,11 @@ using Hexa.Web.Models.oatuh;
 
 namespace Hexa.Web.Controllers
 {
-    public class GrantTypesController : Controller
+    public class GrantTypeController : Controller
     {
         private readonly HexaDbContext _context;
 
-        public GrantTypesController(HexaDbContext context)
+        public GrantTypeController(HexaDbContext context)
         {
             _context = context;
         }
