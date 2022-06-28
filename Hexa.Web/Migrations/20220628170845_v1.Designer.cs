@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hexa.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220628125746_V2")]
-    partial class V2
+    [Migration("20220628170845_v1")]
+    partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,7 +32,7 @@ namespace Hexa.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccessTokenId"), 1L, 1);
 
-                    b.Property<int>("ApplicationId")
+                    b.Property<int>("ApplicationID")
                         .HasColumnType("int");
 
                     b.Property<int>("ApplicatonId")
@@ -60,7 +60,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasKey("AccessTokenId");
 
-                    b.HasIndex("ApplicationId");
+                    b.HasIndex("ApplicationID");
 
                     b.HasIndex("UserId");
 
@@ -69,11 +69,11 @@ namespace Hexa.Web.Migrations
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.Application", b =>
                 {
-                    b.Property<int>("ApplicationId")
+                    b.Property<int>("ApplicationID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationID"), 1L, 1);
 
                     b.Property<string>("Details")
                         .IsRequired()
@@ -94,7 +94,7 @@ namespace Hexa.Web.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("ApplicationId");
+                    b.HasKey("ApplicationID");
 
                     b.ToTable("Applications");
                 });
@@ -107,7 +107,7 @@ namespace Hexa.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthCodeId"), 1L, 1);
 
-                    b.Property<int>("ApplicationId")
+                    b.Property<int>("ApplicationID")
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
@@ -125,7 +125,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasKey("AuthCodeId");
 
-                    b.HasIndex("ApplicationId");
+                    b.HasIndex("ApplicationID");
 
                     b.HasIndex("UserId");
 
@@ -147,9 +147,8 @@ namespace Hexa.Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("IsActive")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Secret")
                         .IsRequired()
@@ -195,7 +194,7 @@ namespace Hexa.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RedirectURIId"), 1L, 1);
 
-                    b.Property<int>("ApplicationId")
+                    b.Property<int>("ApplicationID")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -207,18 +206,18 @@ namespace Hexa.Web.Migrations
 
                     b.HasKey("RedirectURIId");
 
-                    b.HasIndex("ApplicationId");
+                    b.HasIndex("ApplicationID");
 
                     b.ToTable("RedirectURIs");
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.Scope", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ScopeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScopeId"), 1L, 1);
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -228,16 +227,11 @@ namespace Hexa.Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ScopeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Tag")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ScopeId");
+                    b.HasKey("ScopeId");
 
                     b.ToTable("Scopes");
                 });
@@ -245,7 +239,10 @@ namespace Hexa.Web.Migrations
             modelBuilder.Entity("Hexa.Data.Models.oauth.User", b =>
                 {
                     b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -279,7 +276,7 @@ namespace Hexa.Web.Migrations
                 {
                     b.HasOne("Hexa.Data.Models.oauth.Application", "Application")
                         .WithMany()
-                        .HasForeignKey("ApplicationId")
+                        .HasForeignKey("ApplicationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -298,7 +295,7 @@ namespace Hexa.Web.Migrations
                 {
                     b.HasOne("Hexa.Data.Models.oauth.Application", "Application")
                         .WithMany()
-                        .HasForeignKey("ApplicationId")
+                        .HasForeignKey("ApplicationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -335,28 +332,16 @@ namespace Hexa.Web.Migrations
                 {
                     b.HasOne("Hexa.Data.Models.oauth.Application", "Application")
                         .WithMany()
-                        .HasForeignKey("ApplicationId")
+                        .HasForeignKey("ApplicationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("Hexa.Data.Models.oauth.Scope", b =>
-                {
-                    b.HasOne("Hexa.Data.Models.oauth.Scope", null)
-                        .WithMany("ScopeList")
-                        .HasForeignKey("ScopeId");
-                });
-
             modelBuilder.Entity("Hexa.Data.Models.oauth.GrantType", b =>
                 {
                     b.Navigation("GrantTypes");
-                });
-
-            modelBuilder.Entity("Hexa.Data.Models.oauth.Scope", b =>
-                {
-                    b.Navigation("ScopeList");
                 });
 #pragma warning restore 612, 618
         }

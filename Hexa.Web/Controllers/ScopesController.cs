@@ -31,7 +31,7 @@ namespace Hexa.Web.Controllers
             }
 
             var scope = await _context.Scopes
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ScopeId == id);
             if (scope == null)
             {
                 return NotFound();
@@ -85,7 +85,7 @@ namespace Hexa.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Tag")] Scope scope)
         {
-            if (id != scope.Id)
+            if (id != scope.ScopeId)
             {
                 return NotFound();
             }
@@ -99,7 +99,7 @@ namespace Hexa.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ScopeExists(scope.Id))
+                    if (!ScopeExists(scope.ScopeId))
                     {
                         return NotFound();
                     }
@@ -122,7 +122,7 @@ namespace Hexa.Web.Controllers
             }
 
             var scope = await _context.Scopes
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ScopeId == id);
             if (scope == null)
             {
                 return NotFound();
@@ -152,7 +152,7 @@ namespace Hexa.Web.Controllers
 
         private bool ScopeExists(int id)
         {
-          return (_context.Scopes?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Scopes?.Any(e => e.ScopeId == id)).GetValueOrDefault();
         }
     }
 }

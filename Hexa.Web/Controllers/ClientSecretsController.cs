@@ -44,7 +44,7 @@ namespace Hexa.Web.Controllers
         // GET: ClientSecrets/Create
         public IActionResult Create()
         {
-            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId");
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID");
             return View();
         }
 
@@ -61,7 +61,7 @@ namespace Hexa.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", clientSecret.ApplicationID);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", clientSecret.ApplicationID);
             return View(clientSecret);
         }
 
@@ -78,7 +78,7 @@ namespace Hexa.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", clientSecret.ApplicationID);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", clientSecret.ApplicationID);
             return View(clientSecret);
         }
 
@@ -114,7 +114,7 @@ namespace Hexa.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", clientSecret.ApplicationID);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", clientSecret.ApplicationID);
             return View(clientSecret);
         }
 

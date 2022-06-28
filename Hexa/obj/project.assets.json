@@ -8,24 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\saifur\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\saifur\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Playground\\Oauth\\Hexa\\Hexa\\Hexa.csproj",
+      "projectUniqueName": "C:\\playground\\Auth\\Hexa\\Hexa\\Hexa.csproj",
       "projectName": "Hexa",
-      "projectPath": "D:\\Playground\\Oauth\\Hexa\\Hexa\\Hexa.csproj",
+      "projectPath": "C:\\playground\\Auth\\Hexa\\Hexa\\Hexa.csproj",
       "packagesPath": "C:\\Users\\saifur\\.nuget\\packages\\",
-      "outputPath": "D:\\Playground\\Oauth\\Hexa\\Hexa\\obj\\",
+      "outputPath": "C:\\playground\\Auth\\Hexa\\Hexa\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
         "C:\\Users\\saifur\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

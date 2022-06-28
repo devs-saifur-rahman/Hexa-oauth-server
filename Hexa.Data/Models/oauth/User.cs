@@ -6,7 +6,7 @@ namespace Hexa.Data.Models.oauth
     public class User
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }

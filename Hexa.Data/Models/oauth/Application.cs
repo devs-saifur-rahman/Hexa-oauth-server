@@ -7,7 +7,7 @@ namespace Hexa.Data.Models.oauth
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ApplicationId { get; set; }
+        public int ApplicationID { get; set; }
 
         public string Name { get; set; }
         public string Details { get; set; }

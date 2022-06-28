@@ -12,7 +12,7 @@ namespace Hexa.Data.Models.oauth
         public string URI { get; set; }
         public bool IsActive { get; set; }
 
-        public int ApplicationId { get; set; }
+        public int ApplicationID { get; set; }
         public Application Application { get; set; }
     }
 }

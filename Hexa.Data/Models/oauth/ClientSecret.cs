@@ -11,7 +11,7 @@ namespace Hexa.Data.Models.oauth
 
         public string ClientID { get; set; }
         public string Secret { get; set; }
-        public string IsActive { get; set; }
+        public bool IsActive { get; set; }
 
 
         public int ApplicationID { get; set; }

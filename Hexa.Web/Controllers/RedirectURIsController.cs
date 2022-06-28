@@ -48,7 +48,7 @@ namespace Hexa.Web.Controllers
         // GET: RedirectURIs/Create
         public IActionResult Create()
         {
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId");
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RedirectURIId,URI,IsActive,ApplicationId")] RedirectURI redirectURI)
+        public async Task<IActionResult> Create([Bind("RedirectURIId,URI,IsActive,ApplicationID")] RedirectURI redirectURI)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace Hexa.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", redirectURI.ApplicationId);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", redirectURI.ApplicationID);
             return View(redirectURI);
         }
 
@@ -82,7 +82,7 @@ namespace Hexa.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", redirectURI.ApplicationId);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", redirectURI.ApplicationID);
             return View(redirectURI);
         }
 
@@ -91,7 +91,7 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RedirectURIId,URI,IsActive,ApplicationId")] RedirectURI redirectURI)
+        public async Task<IActionResult> Edit(int id, [Bind("RedirectURIId,URI,IsActive,ApplicationID")] RedirectURI redirectURI)
         {
             if (id != redirectURI.RedirectURIId)
             {
@@ -118,7 +118,7 @@ namespace Hexa.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", redirectURI.ApplicationId);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", redirectURI.ApplicationID);
             return View(redirectURI);
         }
 

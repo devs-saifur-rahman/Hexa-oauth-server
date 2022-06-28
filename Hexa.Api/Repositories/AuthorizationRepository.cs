@@ -20,7 +20,7 @@ namespace Hexa.Api.Repositories
             try
             {
                 var a = (from secret in _dbContext.ClientSecrets
-                         join application in _dbContext.Applications on secret.ApplicationID equals application.ApplicationId
+                         join application in _dbContext.Applications on secret.ApplicationID equals application.ApplicationID
                          where secret.ClientID == authRequest.client_id
                          select secret).AsNoTracking();
 
@@ -57,7 +57,7 @@ namespace Hexa.Api.Repositories
             try
             {
                 var a = (from codes in _dbContext.AuthCodes
-                         join apps in _dbContext.Applications on codes.ApplicationId equals apps.ApplicationId
+                         join apps in _dbContext.Applications on codes.ApplicationID equals apps.ApplicationID
                          where codes.IsActive == true && codes.Code == tokenRequest.code
                          select codes
                     ).AsNoTracking();

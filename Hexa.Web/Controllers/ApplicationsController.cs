@@ -37,7 +37,7 @@ namespace Hexa.Web.Controllers
             }
 
             var application = await _dbContext.Applications
-                .FirstOrDefaultAsync(m => m.ApplicationId == id);
+                .FirstOrDefaultAsync(m => m.ApplicationID == id);
             if (application == null)
             {
                 return NotFound();
@@ -63,7 +63,7 @@ namespace Hexa.Web.Controllers
             {
                 _dbContext.Add(new Application
                 {
-                    ApplicationId = model.ApplicationId,
+                    ApplicationID = model.ApplicationID,
                     Name = model.Name,
                     Details = model.Details,
                     UserId = _httpContext.HttpContext.Session.Get<int>("User Id"),
@@ -97,9 +97,9 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ApplicationId,Name,Details,Url,Logo,UserId")] Application application)
+        public async Task<IActionResult> Edit(int id, [Bind("ApplicationID,Name,Details,Url,Logo,UserId")] Application application)
         {
-            if (id != application.ApplicationId)
+            if (id != application.ApplicationID)
             {
                 return NotFound();
             }
@@ -113,7 +113,7 @@ namespace Hexa.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ApplicationExists(application.ApplicationId))
+                    if (!ApplicationExists(application.ApplicationID))
                     {
                         return NotFound();
                     }
@@ -136,7 +136,7 @@ namespace Hexa.Web.Controllers
             }
 
             var application = await _dbContext.Applications
-                .FirstOrDefaultAsync(m => m.ApplicationId == id);
+                .FirstOrDefaultAsync(m => m.ApplicationID == id);
             if (application == null)
             {
                 return NotFound();
@@ -166,7 +166,7 @@ namespace Hexa.Web.Controllers
 
         private bool ApplicationExists(int id)
         {
-          return (_dbContext.Applications?.Any(e => e.ApplicationId == id)).GetValueOrDefault();
+          return (_dbContext.Applications?.Any(e => e.ApplicationID == id)).GetValueOrDefault();
         }
     }
 }

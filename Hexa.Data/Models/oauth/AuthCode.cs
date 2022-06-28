@@ -16,7 +16,7 @@ namespace Hexa.Data.Models.oauth
         public int UserId { get; set; }
         public User User { get; set; }
 
-        public int ApplicationId { get; set; }
+        public int ApplicationID { get; set; }
         public Application Application { get; set; }
 
     }

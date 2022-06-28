@@ -1,3 +1,4 @@
+using Hexa.Api.DTOs;
 using Hexa.Data.DB;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -29,16 +30,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/oauth/v2/authorize", () =>
+app.MapPost("/oauth/v2/authorize", (AuthRequest req) =>
 {
-    var resp = "not implemented";
+    ApiResponse resp = new ApiResponse{
+        success = false,
+        message="Not Implemented"
+    };
+
+//    AuthorizationRepository repo = new AuthorizationRepository();
 
     return resp;
 });
 
-app.MapPost("/oauth/v2/access_token", () =>
+app.MapPost("/oauth/v2/access_token", (TokenRequest req) =>
 {
-    var resp = "not implemented";
+    ApiResponse resp = new ApiResponse
+    {
+        success = false,
+        message = "Not Implemented"
+    };
     return resp;
 });
 
