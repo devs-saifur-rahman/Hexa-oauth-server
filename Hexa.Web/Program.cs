@@ -1,15 +1,21 @@
-using Hexa.Web.DB;
-using Microsoft.Extensions.Configuration;
+using Hexa.Data.DB;
 using Microsoft.EntityFrameworkCore;
-using Hexa.Web.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Data.SqlClient;
+using Hexa.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddDbContext<HexaDbContext>(options =>
-    options.UseSqlServer(ConfigurationExtensions.GetConnectionString(builder.Configuration, "Hexa"))
-);
+var sqlConnection = new SqlConnectionStringBuilder();
+sqlConnection.ConnectionString = builder.Configuration.GetConnectionString("Hexa");
+sqlConnection.UserID = builder.Configuration["sqlServerUser"];
+sqlConnection.Password = builder.Configuration["sqlServerPassword"];
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(sqlConnection.ConnectionString);
+});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -45,23 +51,23 @@ if (!app.Environment.IsDevelopment())
 }
 
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
 
-    try
-    {
-        var context = services.GetRequiredService<HexaDbContext>();
-        HexaDbInitializer.Initialize(context);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
-    }
+//    try
+//    {
+//        var context = services.GetRequiredService<AppDbContext>();
+//        HexaDbInitializer.Initialize(context);
+//    }
+//    catch (Exception ex)
+//    {
+//        var logger = services.GetRequiredService<ILogger<Program>>();
+//        logger.LogError(ex, "An error occurred while seeding the database.");
+//    }
 
 
-}
+//}
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {

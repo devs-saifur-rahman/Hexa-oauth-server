@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Hexa.Web.DB;
-using Hexa.Web.Models.oatuh;
+using Hexa.Data.DB;
 using Hexa.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Hexa.Data.Models.oauth;
 
 namespace Hexa.Web.Controllers
 {
     [Authorize]
     public class ApplicationsController : Controller
     {
-        private readonly HexaDbContext _dbContext;
+        private readonly AppDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContext;
 
-        public ApplicationsController(HexaDbContext dbContext, IHttpContextAccessor httpContext)
+        public ApplicationsController(AppDbContext dbContext, IHttpContextAccessor httpContext)
         { 
             _dbContext = dbContext;
             _httpContext = httpContext;

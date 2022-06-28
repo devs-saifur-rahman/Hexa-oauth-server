@@ -1,4 +1,4 @@
-﻿namespace Hexa.Web.Models.oatuh
+﻿namespace Hexa.Data.Models.oauth
 {
     public class Scope
     {

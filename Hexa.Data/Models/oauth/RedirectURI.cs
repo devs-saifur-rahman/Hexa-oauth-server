@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hexa.Web.Models.oatuh
+namespace Hexa.Data.Models.oauth
 {
     public class RedirectURI
     {

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Hexa.Web.Models.oatuh
+﻿namespace Hexa.Data.Models.oauth
 {
     public enum GrantName
     {

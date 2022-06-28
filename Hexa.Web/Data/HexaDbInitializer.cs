@@ -1,11 +1,11 @@
-﻿using Hexa.Web.DB;
-using Hexa.Web.Models.oatuh;
+﻿using Hexa.Data.Models.oauth;
+using Hexa.Data.DB;
 
 namespace Hexa.Web.Data
 {
     public static class HexaDbInitializer
     {
-        public static void Initialize(HexaDbContext context)
+        public static void Initialize(AppDbContext context)
         {
             context.Database.EnsureCreated();
             if (context.GrantTypes.Any())
@@ -20,9 +20,9 @@ namespace Hexa.Web.Data
                       new GrantType{Name=GrantName.IMPLICITE,Description="implicit grant"},
                       new GrantType{Name=GrantName.CLIENT_CREDENTIAL,Description="client crednetial grant"}
             };
-            foreach (var gratType in grantTypes)
+            foreach (var grantType in grantTypes)
             {
-                context.GrantTypes.Add(gratType);
+                context.GrantTypes.Add(grantType);
             }
 
             context.SaveChanges();

@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hexa.Web", "Hexa.Web\Hexa.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hexa.Api", "Hexa.Api\Hexa.Api.csproj", "{9464AF1F-D260-4F5E-B025-EE35B3B2EAD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hexa.Data", "Hexa.Data\Hexa.Data.csproj", "{3855564B-7584-459A-BF5A-30743AAB3D5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9464AF1F-D260-4F5E-B025-EE35B3B2EAD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9464AF1F-D260-4F5E-B025-EE35B3B2EAD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9464AF1F-D260-4F5E-B025-EE35B3B2EAD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3855564B-7584-459A-BF5A-30743AAB3D5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3855564B-7584-459A-BF5A-30743AAB3D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3855564B-7584-459A-BF5A-30743AAB3D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3855564B-7584-459A-BF5A-30743AAB3D5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
