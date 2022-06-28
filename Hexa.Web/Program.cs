@@ -14,7 +14,8 @@ sqlConnection.Password = builder.Configuration["sqlServerPassword"];
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(sqlConnection.ConnectionString);
+    options.UseSqlServer(sqlConnection.ConnectionString,
+    b => b.MigrationsAssembly(typeof(Program).Assembly.FullName));  //"Hexa.Web"
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

@@ -36,7 +36,7 @@ app.MapPost("/oauth/v2/authorize", () =>
     return resp;
 });
 
-app.MapGet("/oauth/v2/access_token", () =>
+app.MapPost("/oauth/v2/access_token", () =>
 {
     var resp = "not implemented";
     return resp;
