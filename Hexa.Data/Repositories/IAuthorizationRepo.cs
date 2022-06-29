@@ -6,13 +6,14 @@ namespace Hexa.Data.Repositories
     public interface IAuthorizationRepo
     {
        
-        Task<ApiResponse> GetAuthorizationCode(AuthRequest authRequest);
 
-        Task<ApiResponse> GetAccessToken(TokenRequest tokenRequest);
+        Task<ApiResponse<Code>> GetAuthorizationCode(AuthRequest authRequest);
+
+        Task<ApiResponse<Token>> GetAccessToken(TokenRequest tokenRequest);
 
         Task SaveChanges();
-        Task<ApiResponse> GetAuthorizationCode();
-
+        Task<ApiResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList);
+        Task<ApiResponse<Application>> GetApplicationByClientId(string clientId);
 
     }
 }

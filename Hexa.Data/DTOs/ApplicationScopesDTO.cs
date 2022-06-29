@@ -4,7 +4,7 @@
     {
         public ApplicationDTO Application { get; set; }
 
-        public IEnumerable<ScopesDTO> Scopes { get; set; }
+        public IEnumerable<ScopeDTO> Scopes { get; set; }
 
     }
 }

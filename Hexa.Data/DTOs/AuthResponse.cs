@@ -1,9 +1,9 @@
 ﻿namespace Hexa.Data.DTOs
 {
-    public class AuthResponse : ApiResponse
+    public class AuthResponse<T> : ApiResponse<T>
     {
 
-        public Code data { get; set; }
+        public T data { get; set; }
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Hexa.Data.DTOs
 {
-    public class ScopesDTO
+    public class ScopeDTO
     {
         public int ScopeId { get; set; }
         public string Name { get; set; }

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Web;
+using AutoMapper;
 
 namespace Hexa.Web.Controllers
 {
@@ -22,12 +23,14 @@ namespace Hexa.Web.Controllers
         private readonly AppDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationRepo _authRepo;
+        private readonly IMapper _mapper;
 
-        public AccountController(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor, IAuthorizationRepo authRepo)
+        public AccountController(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor, IAuthorizationRepo authRepo, IMapper mapper)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
             _authRepo = authRepo;
+            _mapper = mapper;
         }
 
         // GET: Account/Index/5
@@ -174,7 +177,7 @@ namespace Hexa.Web.Controllers
         //public IActionResult Authorize()
         [HttpGet("oauth/v2/auth")]
         [Authorize]
-        public IActionResult Authorize(string response_type, string client_id, string redirect_uri, string scope, string? state)
+        public async Task<IActionResult> Authorize(string response_type, string client_id, string redirect_uri, string scope, string? state)
         {
             //const string url = "https://localhost:7190/oauth/v2/auth";
             //var param = new Dictionary<string, string>() {
@@ -187,6 +190,20 @@ namespace Hexa.Web.Controllers
 
             //var newUrl = new Uri(QueryHelpers.AddQueryString(url, param));
 
+            //        //sample call
+
+            /**
+            https://localhost:7190/
+            oauth/v2/auth
+            ?
+            response_type=response_type
+            client_id=some.local-1@hexa.sec
+            redirect_uri = 'https://saggoogle.com'
+            scope='sc1 sc2'
+            state='state1'	
+                to generate this 
+            //https://localhost:7190/oauth/v2/auth?response_type=authorization_grant&client_id=some.local-1@hexa.sec&redirect_uri=https%3A%2F%2Fsaggoogle.com&scope=sc1 sc2&state=state1
+            */
 
             AuthRequest reqModel = new AuthRequest
             {
@@ -197,19 +214,21 @@ namespace Hexa.Web.Controllers
                 state = state
             };
 
-            ApplicationScopesDTO applicationScopesDTO = new ApplicationScopesDTO {
-                Application = new ApplicationDTO { 
-                    Name = "app 1",
-                    Details="app det 1",
-                    Logo = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Free_logos_dribbble_ph.webp/800px-Free_logos_dribbble_ph.webp.png?20210504201705",
-                    Url="https://google.com"
-                },
-                Scopes = new List<ScopesDTO> {
-                    new ScopesDTO{ Name = "sc1", Description="desc1", Tag="sc1"},
-                    new ScopesDTO{ Name = "sc2", Description="desc2", Tag="sc2"}
-                }            
-            };
 
+            var application = await _authRepo.GetApplicationByClientId(client_id);
+
+            var scopesList = await _authRepo.GetApplicationScopes(client_id, scope.ToLower().Split(' ').ToList());
+
+            ApplicationDTO appDTO = _mapper.Map<Application, ApplicationDTO>(application.data);
+            List<ScopeDTO> scopesDTO = _mapper.Map<List<Scope>, List<ScopeDTO>>(scopesList.data);
+
+
+            ApplicationScopesDTO applicationScopesDTO = new ApplicationScopesDTO
+            {
+                Application = appDTO,
+                Scopes = scopesDTO
+            };
+            
 
 
             return View("Authorize", applicationScopesDTO);
@@ -220,8 +239,12 @@ namespace Hexa.Web.Controllers
         public async Task<IActionResult> Authorize(string hasAllowed)
         {
 
-            if(hasAllowed.ToLower() == "allow")
+            if (hasAllowed.ToLower() == "allow")
             {
+
+
+
+
 
             }
             else
@@ -229,7 +252,7 @@ namespace Hexa.Web.Controllers
 
             }
 
-           // await HttpContext.SignOutAsync();
+            // await HttpContext.SignOutAsync();
             return RedirectToAction(actionName: "Index", controllerName: "Account");
 
 

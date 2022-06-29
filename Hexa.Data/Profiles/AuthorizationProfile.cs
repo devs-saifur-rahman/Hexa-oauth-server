@@ -12,6 +12,10 @@ namespace Hexa.Api.Profiles
             CreateMap<AccessToken, Token>();
             CreateMap<AuthRequest, ClientSecret>();
             CreateMap<TokenRequest, ClientSecret>();
+            CreateMap<Scope,ScopeDTO>();
+            CreateMap<ScopeDTO, Scope>();
+            CreateMap<ApplicationDTO, Application>();
+            CreateMap<Application, ApplicationDTO>();
 
         }
     }
