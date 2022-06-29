@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Hexa.Web.Models.oatuh.RedirectURI>
+﻿@model IEnumerable<Hexa.Data.Models.oauth.RedirectURI>
 
 @{
     ViewData["Title"] = "Index";
@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.IsActive)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Application.ApplicationId)
+                @Html.DisplayFor(modelItem => item.Application.ApplicationID)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.RedirectURIId">Edit</a> |

@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Hexa.Web.DB;
-using Hexa.Web.Models.oatuh;
+using Hexa.Data.DB;
+using Hexa.Data.Models.oauth;
 
 namespace Hexa.Web.Controllers
 {
     public class GrantTypesController : Controller
     {
-        private readonly HexaDbContext _context;
+        private readonly AppDbContext _context;
 
-        public GrantTypesController(HexaDbContext context)
+        public GrantTypesController(AppDbContext context)
         {
             _context = context;
         }

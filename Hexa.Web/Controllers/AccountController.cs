@@ -1,5 +1,4 @@
-﻿using Hexa.Web.DB;
-using Hexa.Web.Models.oatuh;
+﻿using Hexa.Data.DB;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -7,16 +6,17 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Hexa.Web.Extensions;
+using Hexa.Data.Models.oauth;
 
 namespace Hexa.Web.Controllers
 {
     public class AccountController : Controller
     {
 
-        private readonly HexaDbContext _dbContext;
+        private readonly AppDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContext;
 
-        public AccountController(HexaDbContext dbContext, IHttpContextAccessor httpContext)
+        public AccountController(AppDbContext dbContext, IHttpContextAccessor httpContext)
         {
             _dbContext = dbContext;
             _httpContext = httpContext;

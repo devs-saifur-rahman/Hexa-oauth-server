@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Hexa.Web.DB;
-using Hexa.Web.Models.oatuh;
+using Hexa.Data.DB;
+using Hexa.Data.Models.oauth;
 
 namespace Hexa.Web.Controllers
 {
     public class RedirectURIsController : Controller
     {
-        private readonly HexaDbContext _context;
+        private readonly AppDbContext _context;
 
-        public RedirectURIsController(HexaDbContext context)
+        public RedirectURIsController(AppDbContext context)
         {
             _context = context;
         }
@@ -22,19 +22,19 @@ namespace Hexa.Web.Controllers
         // GET: RedirectURIs
         public async Task<IActionResult> Index()
         {
-            var hexaDbContext = _context.RedirectUris.Include(r => r.Application);
+            var hexaDbContext = _context.RedirectURIs.Include(r => r.Application);
             return View(await hexaDbContext.ToListAsync());
         }
 
         // GET: RedirectURIs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.RedirectUris == null)
+            if (id == null || _context.RedirectURIs == null)
             {
                 return NotFound();
             }
 
-            var redirectURI = await _context.RedirectUris
+            var redirectURI = await _context.RedirectURIs
                 .Include(r => r.Application)
                 .FirstOrDefaultAsync(m => m.RedirectURIId == id);
             if (redirectURI == null)
@@ -48,7 +48,7 @@ namespace Hexa.Web.Controllers
         // GET: RedirectURIs/Create
         public IActionResult Create()
         {
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId");
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RedirectURIId,URI,IsActive,ApplicationId")] RedirectURI redirectURI)
+        public async Task<IActionResult> Create([Bind("RedirectURIId,URI,IsActive,ApplicationID")] RedirectURI redirectURI)
         {
             if (ModelState.IsValid)
             {
@@ -65,24 +65,24 @@ namespace Hexa.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", redirectURI.ApplicationId);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", redirectURI.ApplicationID);
             return View(redirectURI);
         }
 
         // GET: RedirectURIs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.RedirectUris == null)
+            if (id == null || _context.RedirectURIs == null)
             {
                 return NotFound();
             }
 
-            var redirectURI = await _context.RedirectUris.FindAsync(id);
+            var redirectURI = await _context.RedirectURIs.FindAsync(id);
             if (redirectURI == null)
             {
                 return NotFound();
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", redirectURI.ApplicationId);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", redirectURI.ApplicationID);
             return View(redirectURI);
         }
 
@@ -91,7 +91,7 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RedirectURIId,URI,IsActive,ApplicationId")] RedirectURI redirectURI)
+        public async Task<IActionResult> Edit(int id, [Bind("RedirectURIId,URI,IsActive,ApplicationID")] RedirectURI redirectURI)
         {
             if (id != redirectURI.RedirectURIId)
             {
@@ -118,19 +118,19 @@ namespace Hexa.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationId"] = new SelectList(_context.Applications, "ApplicationId", "ApplicationId", redirectURI.ApplicationId);
+            ViewData["ApplicationID"] = new SelectList(_context.Applications, "ApplicationID", "ApplicationID", redirectURI.ApplicationID);
             return View(redirectURI);
         }
 
         // GET: RedirectURIs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.RedirectUris == null)
+            if (id == null || _context.RedirectURIs == null)
             {
                 return NotFound();
             }
 
-            var redirectURI = await _context.RedirectUris
+            var redirectURI = await _context.RedirectURIs
                 .Include(r => r.Application)
                 .FirstOrDefaultAsync(m => m.RedirectURIId == id);
             if (redirectURI == null)
@@ -146,14 +146,14 @@ namespace Hexa.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.RedirectUris == null)
+            if (_context.RedirectURIs == null)
             {
-                return Problem("Entity set 'HexaDbContext.RedirectUris'  is null.");
+                return Problem("Entity set 'HexaDbContext.RedirectURIs'  is null.");
             }
-            var redirectURI = await _context.RedirectUris.FindAsync(id);
+            var redirectURI = await _context.RedirectURIs.FindAsync(id);
             if (redirectURI != null)
             {
-                _context.RedirectUris.Remove(redirectURI);
+                _context.RedirectURIs.Remove(redirectURI);
             }
             
             await _context.SaveChangesAsync();
@@ -162,7 +162,7 @@ namespace Hexa.Web.Controllers
 
         private bool RedirectURIExists(int id)
         {
-          return (_context.RedirectUris?.Any(e => e.RedirectURIId == id)).GetValueOrDefault();
+          return (_context.RedirectURIs?.Any(e => e.RedirectURIId == id)).GetValueOrDefault();
         }
     }
 }

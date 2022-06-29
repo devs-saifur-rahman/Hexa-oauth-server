@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Hexa.Web.Migrations
 {
-    public partial class _1 : Migration
+    public partial class v1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,7 @@ namespace Hexa.Web.Migrations
                 name: "Applications",
                 columns: table => new
                 {
-                    ApplicationId = table.Column<int>(type: "int", nullable: false)
+                    ApplicationID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Details = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -23,7 +23,7 @@ namespace Hexa.Web.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Applications", x => x.ApplicationId);
+                    table.PrimaryKey("PK_Applications", x => x.ApplicationID);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,28 +50,23 @@ namespace Hexa.Web.Migrations
                 name: "Scopes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ScopeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Tag = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ScopeId = table.Column<int>(type: "int", nullable: true)
+                    Tag = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Scopes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Scopes_Scopes_ScopeId",
-                        column: x => x.ScopeId,
-                        principalTable: "Scopes",
-                        principalColumn: "Id");
+                    table.PrimaryKey("PK_Scopes", x => x.ScopeId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -90,9 +85,9 @@ namespace Hexa.Web.Migrations
                 {
                     ClientSecretID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientID = table.Column<int>(type: "int", nullable: false),
+                    ClientID = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Secret = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     ApplicationID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -102,28 +97,28 @@ namespace Hexa.Web.Migrations
                         name: "FK_ClientSecrets_Applications_ApplicationID",
                         column: x => x.ApplicationID,
                         principalTable: "Applications",
-                        principalColumn: "ApplicationId",
+                        principalColumn: "ApplicationID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RedirectUris",
+                name: "RedirectURIs",
                 columns: table => new
                 {
                     RedirectURIId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     URI = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    ApplicationId = table.Column<int>(type: "int", nullable: false)
+                    ApplicationID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RedirectUris", x => x.RedirectURIId);
+                    table.PrimaryKey("PK_RedirectURIs", x => x.RedirectURIId);
                     table.ForeignKey(
-                        name: "FK_RedirectUris_Applications_ApplicationId",
-                        column: x => x.ApplicationId,
+                        name: "FK_RedirectURIs_Applications_ApplicationID",
+                        column: x => x.ApplicationID,
                         principalTable: "Applications",
-                        principalColumn: "ApplicationId",
+                        principalColumn: "ApplicationID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -134,7 +129,7 @@ namespace Hexa.Web.Migrations
                     AccessTokenId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicatonId = table.Column<int>(type: "int", nullable: false),
-                    ApplicationId = table.Column<int>(type: "int", nullable: false),
+                    ApplicationID = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -146,10 +141,10 @@ namespace Hexa.Web.Migrations
                 {
                     table.PrimaryKey("PK_AccessTokens", x => x.AccessTokenId);
                     table.ForeignKey(
-                        name: "FK_AccessTokens_Applications_ApplicationId",
-                        column: x => x.ApplicationId,
+                        name: "FK_AccessTokens_Applications_ApplicationID",
+                        column: x => x.ApplicationID,
                         principalTable: "Applications",
-                        principalColumn: "ApplicationId",
+                        principalColumn: "ApplicationID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AccessTokens_Users_UserId",
@@ -165,20 +160,20 @@ namespace Hexa.Web.Migrations
                 {
                     AuthCodeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Code = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsAuthented = table.Column<bool>(type: "bit", nullable: false),
+                    IsAuthenticated = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    ApplicationId = table.Column<int>(type: "int", nullable: false)
+                    ApplicationID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AuthCodes", x => x.AuthCodeId);
                     table.ForeignKey(
-                        name: "FK_AuthCodes_Applications_ApplicationId",
-                        column: x => x.ApplicationId,
+                        name: "FK_AuthCodes_Applications_ApplicationID",
+                        column: x => x.ApplicationID,
                         principalTable: "Applications",
-                        principalColumn: "ApplicationId",
+                        principalColumn: "ApplicationID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AuthCodes_Users_UserId",
@@ -189,9 +184,9 @@ namespace Hexa.Web.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccessTokens_ApplicationId",
+                name: "IX_AccessTokens_ApplicationID",
                 table: "AccessTokens",
-                column: "ApplicationId");
+                column: "ApplicationID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccessTokens_UserId",
@@ -199,9 +194,9 @@ namespace Hexa.Web.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuthCodes_ApplicationId",
+                name: "IX_AuthCodes_ApplicationID",
                 table: "AuthCodes",
-                column: "ApplicationId");
+                column: "ApplicationID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuthCodes_UserId",
@@ -219,14 +214,9 @@ namespace Hexa.Web.Migrations
                 column: "GrantTypeid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RedirectUris_ApplicationId",
-                table: "RedirectUris",
-                column: "ApplicationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Scopes_ScopeId",
-                table: "Scopes",
-                column: "ScopeId");
+                name: "IX_RedirectURIs_ApplicationID",
+                table: "RedirectURIs",
+                column: "ApplicationID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -244,7 +234,7 @@ namespace Hexa.Web.Migrations
                 name: "GrantTypes");
 
             migrationBuilder.DropTable(
-                name: "RedirectUris");
+                name: "RedirectURIs");
 
             migrationBuilder.DropTable(
                 name: "Scopes");

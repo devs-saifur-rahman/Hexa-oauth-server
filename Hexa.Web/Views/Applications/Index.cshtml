@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Hexa.Web.Models.oatuh.Application>
+﻿@model IEnumerable<Hexa.Data.Models.oauth.Application>
 
 @{
     ViewData["Title"] = "Index";
@@ -49,9 +49,9 @@
                 @Html.DisplayFor(modelItem => item.UserId)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ApplicationId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ApplicationId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ApplicationId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ApplicationID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ApplicationID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ApplicationID">Delete</a>
             </td>
         </tr>
 }

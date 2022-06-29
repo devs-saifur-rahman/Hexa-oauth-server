@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Hexa.Web.Models.oatuh.ClientSecret>
+﻿@model IEnumerable<Hexa.Data.Models.oauth.ClientSecret>
 
 @{
     ViewData["Title"] = "Index";
@@ -40,7 +40,7 @@
                 @Html.DisplayFor(modelItem => item.IsActive)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Application.ApplicationId)
+                @Html.DisplayFor(modelItem => item.Application.ApplicationID)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ClientSecretID">Edit</a> |

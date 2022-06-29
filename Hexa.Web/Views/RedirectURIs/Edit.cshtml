@@ -1,4 +1,4 @@
-﻿@model Hexa.Web.Models.oatuh.RedirectURI
+﻿@model Hexa.Data.Models.oauth.RedirectURI
 
 @{
     ViewData["Title"] = "Edit";
@@ -24,9 +24,9 @@
                 </label>
             </div>
             <div class="form-group">
-                <label asp-for="ApplicationId" class="control-label"></label>
-                <select asp-for="ApplicationId" class="form-control" asp-items="ViewBag.ApplicationId"></select>
-                <span asp-validation-for="ApplicationId" class="text-danger"></span>
+                <label asp-for="ApplicationID" class="control-label"></label>
+                <select asp-for="ApplicationID" class="form-control" asp-items="ViewBag.ApplicationID"></select>
+                <span asp-validation-for="ApplicationID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

@@ -1,21 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace Hexa.Web.Models.oatuh
+
+namespace Hexa.Data.Models.oauth
 {
-    public class ClientSecret
+    public class RedirectURI
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ClientSecretID { get; set; }
+        public int RedirectURIId { get; set; }
         
-
-        public int ClientID { get; set; }
-        public string Secret { get; set; }
-        public string IsActive { get; set; }
-
+        public string URI { get; set; }
+        public bool IsActive { get; set; }
 
         public int ApplicationID { get; set; }
         public Application Application { get; set; }
-
     }
 }

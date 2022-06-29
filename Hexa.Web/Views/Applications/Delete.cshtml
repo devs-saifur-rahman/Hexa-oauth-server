@@ -1,4 +1,4 @@
-﻿@model Hexa.Web.Models.oatuh.Application
+﻿@model Hexa.Data.Models.oauth.Application
 
 @{
     ViewData["Title"] = "Delete";
@@ -44,7 +44,7 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="ApplicationId" />
+        <input type="hidden" asp-for="ApplicationID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

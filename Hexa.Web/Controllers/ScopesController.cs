@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Hexa.Web.DB;
-using Hexa.Web.Models.oatuh;
+using Hexa.Data.DB;
+using Hexa.Data.Models.oauth;
 
 namespace Hexa.Web.Controllers
 {
     public class ScopesController : Controller
     {
-        private readonly HexaDbContext _context;
+        private readonly AppDbContext _context;
 
-        public ScopesController(HexaDbContext context)
+        public ScopesController(AppDbContext context)
         {
             _context = context;
         }
@@ -36,7 +31,7 @@ namespace Hexa.Web.Controllers
             }
 
             var scope = await _context.Scopes
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ScopeId == id);
             if (scope == null)
             {
                 return NotFound();
@@ -90,7 +85,7 @@ namespace Hexa.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Tag")] Scope scope)
         {
-            if (id != scope.Id)
+            if (id != scope.ScopeId)
             {
                 return NotFound();
             }
@@ -104,7 +99,7 @@ namespace Hexa.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ScopeExists(scope.Id))
+                    if (!ScopeExists(scope.ScopeId))
                     {
                         return NotFound();
                     }
@@ -127,7 +122,7 @@ namespace Hexa.Web.Controllers
             }
 
             var scope = await _context.Scopes
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ScopeId == id);
             if (scope == null)
             {
                 return NotFound();
@@ -157,7 +152,7 @@ namespace Hexa.Web.Controllers
 
         private bool ScopeExists(int id)
         {
-          return (_context.Scopes?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Scopes?.Any(e => e.ScopeId == id)).GetValueOrDefault();
         }
     }
 }
