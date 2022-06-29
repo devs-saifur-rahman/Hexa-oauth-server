@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Data.SqlClient;
 using Hexa.Web.Data;
+using Hexa.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+
+builder.Services.AddScoped<IAuthorizationRepo, AuthorizationRepo>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -30,6 +36,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         options.AccessDeniedPath = "/forbidden/";
     });
+
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options=>
 {

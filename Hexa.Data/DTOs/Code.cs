@@ -1,4 +1,4 @@
-﻿namespace Hexa.Api.DTOs
+﻿namespace Hexa.Data.DTOs
 {
     public class Code
     {

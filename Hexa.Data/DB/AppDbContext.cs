@@ -14,28 +14,30 @@ namespace Hexa.Data.DB
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<GrantType>();
-            modelBuilder.Entity<Scope>();
-
             modelBuilder.Entity<User>();
+
             modelBuilder.Entity<Application>();
             modelBuilder.Entity<ClientSecret>();
             modelBuilder.Entity<RedirectURI>();
 
+
+            modelBuilder.Entity<User>();
             modelBuilder.Entity<AuthCode>();
             modelBuilder.Entity<AccessToken>();
 
+
+            modelBuilder.Entity<GrantType>();
+            modelBuilder.Entity<Scope>();
+
+
+            modelBuilder.Entity<ApplicationScope>().HasKey(appscp => new { appscp.ApplicationId, appscp.ScopeId });
+            modelBuilder.Entity<ApplicationScope>().HasOne(appscp => appscp.Application).WithMany(app => app.ApplicationScopes).HasForeignKey(appscp => appscp.ApplicationId);
+            modelBuilder.Entity<ApplicationScope>().HasOne(appscp => appscp.Scope).WithMany(scp => scp.ApplicationScopes).HasForeignKey(appscp => appscp.ScopeId);
+
+
+
         }
 
-
-        //public DbSet<GrantType> GrantTypes { get; set; }
-        //public DbSet<RedirectURI> RedirectUris { get; set; }
-        //public DbSet<AccessToken> AccessTokens { get; set; }
-        //public DbSet<Application> Applications { get; set; }
-        //public DbSet<AuthCode> AuthCodes { get; set; }
-        //public DbSet<ClientSecret> ClientSecrets { get; set; }
-        //public DbSet<Scope> Scopes { get; set; }
-        //public DbSet<User> Users { get; set; }
 
 
         public DbSet<Application> Applications => Set<Application>();
@@ -49,6 +51,9 @@ namespace Hexa.Data.DB
 
         public DbSet<GrantType> GrantTypes => Set<GrantType>();
         public DbSet<Scope> Scopes => Set<Scope>();
+
+
+        public DbSet<ApplicationScope> ApplicationScopes => Set<ApplicationScope>();
 
     }
 }

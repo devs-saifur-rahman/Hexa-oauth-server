@@ -12,5 +12,7 @@ namespace Hexa.Data.Models.oauth
         public string Description { get; set; }
         public string Tag { get; set; }
 
+
+        public ICollection<ApplicationScope> ApplicationScopes { get; set; }
     }
 }

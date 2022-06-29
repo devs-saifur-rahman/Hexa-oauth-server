@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hexa.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220628170845_v1")]
+    [Migration("20220629161157_v1")]
     partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,6 +97,24 @@ namespace Hexa.Web.Migrations
                     b.HasKey("ApplicationID");
 
                     b.ToTable("Applications");
+                });
+
+            modelBuilder.Entity("Hexa.Data.Models.oauth.ApplicationScope", b =>
+                {
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScopeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ApplicationId", "ScopeId");
+
+                    b.HasIndex("ScopeId");
+
+                    b.ToTable("ApplicationScopes");
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.AuthCode", b =>
@@ -291,6 +309,25 @@ namespace Hexa.Web.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Hexa.Data.Models.oauth.ApplicationScope", b =>
+                {
+                    b.HasOne("Hexa.Data.Models.oauth.Application", "Application")
+                        .WithMany("ApplicationScopes")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Hexa.Data.Models.oauth.Scope", "Scope")
+                        .WithMany("ApplicationScopes")
+                        .HasForeignKey("ScopeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Scope");
+                });
+
             modelBuilder.Entity("Hexa.Data.Models.oauth.AuthCode", b =>
                 {
                     b.HasOne("Hexa.Data.Models.oauth.Application", "Application")
@@ -339,9 +376,19 @@ namespace Hexa.Web.Migrations
                     b.Navigation("Application");
                 });
 
+            modelBuilder.Entity("Hexa.Data.Models.oauth.Application", b =>
+                {
+                    b.Navigation("ApplicationScopes");
+                });
+
             modelBuilder.Entity("Hexa.Data.Models.oauth.GrantType", b =>
                 {
                     b.Navigation("GrantTypes");
+                });
+
+            modelBuilder.Entity("Hexa.Data.Models.oauth.Scope", b =>
+                {
+                    b.Navigation("ApplicationScopes");
                 });
 #pragma warning restore 612, 618
         }

@@ -123,6 +123,31 @@ namespace Hexa.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ApplicationScopes",
+                columns: table => new
+                {
+                    ApplicationId = table.Column<int>(type: "int", nullable: false),
+                    ScopeId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationScopes", x => new { x.ApplicationId, x.ScopeId });
+                    table.ForeignKey(
+                        name: "FK_ApplicationScopes_Applications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "Applications",
+                        principalColumn: "ApplicationID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApplicationScopes_Scopes_ScopeId",
+                        column: x => x.ScopeId,
+                        principalTable: "Scopes",
+                        principalColumn: "ScopeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AccessTokens",
                 columns: table => new
                 {
@@ -194,6 +219,11 @@ namespace Hexa.Web.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ApplicationScopes_ScopeId",
+                table: "ApplicationScopes",
+                column: "ScopeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AuthCodes_ApplicationID",
                 table: "AuthCodes",
                 column: "ApplicationID");
@@ -223,6 +253,9 @@ namespace Hexa.Web.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AccessTokens");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationScopes");
 
             migrationBuilder.DropTable(
                 name: "AuthCodes");
