@@ -1,4 +1,6 @@
+using AutoMapper;
 using Hexa.Api.DTOs;
+using Hexa.Api.Repositories;
 using Hexa.Data.DB;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 
+builder.Services.AddScoped<IAuthorizationRepo, AuthorizationRepo>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 var app = builder.Build();
 
@@ -30,16 +35,24 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/oauth/v2/authorize", (AuthRequest req) =>
+app.MapPost("/oauth/v2/authorize", async (IAuthorizationRepo repo, IMapper mapper, AuthRequest req) =>
 {
-    ApiResponse resp = new ApiResponse{
-        success = false,
-        message="Not Implemented"
-    };
 
-//    AuthorizationRepository repo = new AuthorizationRepository();
+    var resp = await repo.GetAuthorizationCode(req);
 
-    return resp;
+    return Results.Ok(mapper.Map<ApiResponse>(resp));
+
+    //ApiResponse resp = new ApiResponse{
+    //    success = false,
+    //    message="Not Implemented"
+    //};
+
+
+
+
+    //    AuthorizationRepository repo = new AuthorizationRepository();
+
+  //  return resp;
 });
 
 app.MapPost("/oauth/v2/access_token", (TokenRequest req) =>

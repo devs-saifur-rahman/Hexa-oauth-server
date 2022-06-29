@@ -4,16 +4,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hexa.Api.Repositories
 {
-    public class AuthorizationRepository
+    public class AuthorizationRepo : IAuthorizationRepo
     {
-        private AppDbContext _dbContext;
-        public AuthorizationRepository(AppDbContext dbContext)
+        private readonly AppDbContext _dbContext;
+
+        public AuthorizationRepo(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
 
-        public ApiResponse GetAuthorizationCode(AuthRequest authRequest)
+        public Task<ApiResponse> GetAuthorizationCode(AuthRequest authRequest)
         {
 
             ApiResponse resp;
@@ -48,10 +49,10 @@ namespace Hexa.Api.Repositories
                 };
             }
 
-            return resp;
+            return Task.FromResult(resp);
         }
 
-        public ApiResponse GetAccessToken(TokenRequest tokenRequest)
+        public Task<ApiResponse> GetAccessToken(TokenRequest tokenRequest)
         {
             ApiResponse resp;
             try
@@ -85,8 +86,61 @@ namespace Hexa.Api.Repositories
                     message = ex.Message
                 };
             }
+            
+            return Task.FromResult(resp);
+        }
 
-            return resp;
+        public async Task SaveChanges()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<ApiResponse> GetAuthorizationCode()
+        {
+            ApiResponse resp;
+            //try
+            //{
+            //    var a = (from secret in _dbContext.ClientSecrets
+            //             join application in _dbContext.Applications on secret.ApplicationID equals application.ApplicationID
+            //             where secret.ClientID == authRequest.client_id
+            //             select secret).AsNoTracking();
+
+
+
+            //resp = new AuthResponse
+            //{
+            //    success = true,
+            //    message = "",
+            //    data = new Code
+            //    {
+            //        code = "Not Implemented",
+            //        state = authRequest.state
+            //    }
+            //};
+
+            //}
+
+            //catch (Exception ex)
+            //{
+            //resp = new ApiResponse
+            //    {
+            //        success = false,
+            //        message = "Not Implmented ye"
+            //    };
+            // }
+
+            resp = new AuthResponse
+            {
+                success = true,
+                message = "",
+                data = new Code
+                {
+                    code = "Not Implemented AuthResponse",
+                    state = "No State"
+                }
+            };
+
+            return resp; 
         }
     }
 }
