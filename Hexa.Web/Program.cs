@@ -94,6 +94,6 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Register}/{id?}");
+    pattern: "{controller=Dashboard}/{action=Index}/{param?}");
 
 app.Run();

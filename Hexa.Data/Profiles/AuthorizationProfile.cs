@@ -17,6 +17,10 @@ namespace Hexa.Api.Profiles
             CreateMap<ApplicationDTO, Application>();
             CreateMap<Application, ApplicationDTO>();
 
+            CreateMap<RegisterUserDTO, User>();
+            CreateMap<User, RegisterUserDTO> ();
+
+
         }
     }
 }

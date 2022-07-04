@@ -48,7 +48,7 @@ namespace Hexa.Web.Controllers
         [HttpPost]
 
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("Name,Email,PhoneNumber,Password,Salt")] User model)
+        public async Task<IActionResult> Register(RegisterUserDTO model)
         {
             if (ModelState.IsValid)
             {
@@ -56,27 +56,21 @@ namespace Hexa.Web.Controllers
 
                 if (exisitngUser == null)
                 {
+
                     var rad = RandomNumberGenerator.Create();
                     byte[] b = new byte[4];
                     rad.GetNonZeroBytes(b);
-                    string salt = BitConverter.ToInt32(b).ToString();
 
+                    User user = _mapper.Map<RegisterUserDTO, User>(model);
+                    user.Salt = BitConverter.ToInt32(b).ToString();
+                    user.Password = ComputeHash(model.Password, user.Salt);
 
-                    _dbContext.Add(new User
-                    {
-                        Name = model.Name,
-                        Email = model.Email,
-                        PhoneNumber = model.PhoneNumber,
-                        Password = ComputeHash(model.Password, salt),
-                        Salt = salt,
-                    });
+                    _dbContext.Add(user);
                     await _dbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Login));
                 }
                 return Problem("User with same email already exists");
             }
-
-
             return Problem("Invalid User data");
         }
 
@@ -228,7 +222,7 @@ namespace Hexa.Web.Controllers
                 Application = appDTO,
                 Scopes = scopesDTO
             };
-            
+
 
 
             return View("Authorize", applicationScopesDTO);
