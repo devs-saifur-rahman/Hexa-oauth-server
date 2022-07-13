@@ -4,6 +4,8 @@ using Hexa.Data.DB;
 using Hexa.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Hexa.Data.Models.oauth;
+using System.Security.Claims;
+using Hexa.Data.Repositories;
 
 namespace Hexa.Web.Controllers
 {
@@ -12,20 +14,23 @@ namespace Hexa.Web.Controllers
     {
         private readonly AppDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IApplicationRepo _applicationRepo;
 
-        public ApplicationsController(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor)
-        { 
+        public ApplicationsController(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor, IApplicationRepo applicationRepo)
+        {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
+            _applicationRepo = applicationRepo;
         }
 
 
         // GET: Applications
         public async Task<IActionResult> Index()
         {
-              return _dbContext.Applications != null ? 
-                          View(await _dbContext.Applications.ToListAsync()) :
-                          Problem("Entity set 'HexaDbdbContext.Applications'  is null.");
+
+            List<Application> list = await _applicationRepo.GetApplicationsAsync();
+
+            return View(list);
         }
 
         // GET: Applications/Details/5
@@ -71,7 +76,7 @@ namespace Hexa.Web.Controllers
                     Logo = model.Logo
                 });
                 await _dbContext.SaveChangesAsync();
-                return RedirectToAction(actionName: "Index", controllerName:"Applications");
+                return RedirectToAction(actionName: "Index", controllerName: "Applications");
             }
             return View(model);
         }
@@ -159,14 +164,14 @@ namespace Hexa.Web.Controllers
             {
                 _dbContext.Applications.Remove(application);
             }
-            
+
             await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ApplicationExists(int id)
         {
-          return (_dbContext.Applications?.Any(e => e.ApplicationID == id)).GetValueOrDefault();
+            return (_dbContext.Applications?.Any(e => e.ApplicationID == id)).GetValueOrDefault();
         }
     }
 }

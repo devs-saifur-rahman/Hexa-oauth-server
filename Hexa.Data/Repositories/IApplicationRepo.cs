@@ -3,20 +3,22 @@ using Hexa.Data.Models.oauth;
 
 namespace Hexa.Data.Repositories
 {
-    public interface IApplicatonRepo
+    public interface IApplicationRepo
     {
         Task<List<Application>> GetApplicationsAsync();
-        Task<Application> GetApplicationById(int id);
+        Task<Application> GetApplicationById(int applicationId);
 
         Task CreateApplicationAsync(NewApplicationDTO application);
         Task UpdateApplicationAsync(ApplicationDTO application);
         // Add new url after 
-        Task CreateRedirectUrl(RedirectURI redirectURIs);
+        Task CreateRedirectUrlAsync(RedirectURI redirectURIs);
         //One redirect url at a time
-        Task UpdateRedirectURI(RedirectURI redirectURIs);
+        Task UpdateRedirectURIAsync(RedirectURI redirectURIs);
 
-        Task DeactivateApplication(int id);
+        Task DeactivateApplicationAsync(int id);
         Task DeleteApplicationAsync(int id);
+
+        Task SaveChangesAsync();
 
     }
 }
