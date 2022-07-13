@@ -33,20 +33,21 @@ namespace Hexa.Web.Controllers
             _mapper = mapper;
         }
 
-        // GET: Account/Index/5
+
+        #region Registration
+
         public IActionResult Register()
         {
             return View("Register");
         }
 
-        public string ComputeHash(string toHash, string salt)
-        {
-            var byteResult = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(toHash), Encoding.UTF8.GetBytes(salt), 10000);
-            return Convert.ToBase64String(byteResult.GetBytes(24));
-        }
 
+        /// <summary>
+        /// Registration form submission
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Redirects to Login page</returns>
         [HttpPost]
-
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterUserDTO model)
         {
@@ -69,13 +70,18 @@ namespace Hexa.Web.Controllers
                     await _dbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Login));
                 }
-                return Problem("User with same email already exists");
+                ///TODO : Add sweetalert pop or some proper message in register page
+                ViewBag.ErrorMessage = "User with same email already exists";
+                return View("Register", model);
             }
-            return Problem("Invalid User data");
+            ViewBag.ErrorMessage = "Invalid User data";
+            return View("Register", model);
         }
 
+        #endregion
 
-        // GET: Account/Index/5
+        #region Login
+
         public IActionResult Login()
         {
             return View();
@@ -84,20 +90,22 @@ namespace Hexa.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginUserDTO model, string returnUrl)
-        {   var user = _dbContext.Users.Where(query => query.Email.Equals(model.Email)).SingleOrDefault();
-
-
-
+        {
+            var user = _dbContext.Users.Where(query => query.Email.Equals(model.Email)).SingleOrDefault();
             if (user == null)
             {
-
                 return View("Login", model);
             }
             else
             {
                 if (ComputeHash(model.Password, user.Salt) != user.Password)
                 {
-                    //return Problem("Password Not Matching");
+                    ViewBag.ErrorMessage = "Password Not Matching";
+                    return View("Login", model);
+                }
+                if (!user.IsActive)
+                {
+                    ViewBag.ErrorMessage = "User is not active";
                     return View("Login", model);
                 }
 
@@ -126,23 +134,26 @@ namespace Hexa.Web.Controllers
                 {
                     return RedirectToAction(actionName: "Index", controllerName: "Applications");
                 }
+                else
                 {
                     return LocalRedirect(returnUrl);
                 }
-
-
-
             }
-
         }
+
+        #endregion
+
+        #region Signout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            return RedirectToAction(actionName: "Login", controllerName: "Authentication");
+            return RedirectToAction(actionName: "Login", controllerName: "Account");
         }
+        #endregion
 
+        #region authorization
 
         //[HttpGet("oauth/v2/auth")]
         //public IActionResult Authorize()
@@ -223,10 +234,19 @@ namespace Hexa.Web.Controllers
 
             }
 
-            // await HttpContext.SignOutAsync();
             return RedirectToAction(actionName: "Index", controllerName: "Account");
-
-
         }
+        #endregion
+
+        #region Helper functions
+
+        public string ComputeHash(string toHash, string salt)
+        {
+            var byteResult = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(toHash), Encoding.UTF8.GetBytes(salt), 10000);
+            return Convert.ToBase64String(byteResult.GetBytes(24));
+        }
+
+
+        #endregion
     }
 }
