@@ -15,9 +15,9 @@ namespace Hexa.Data.Repositories
         }
 
 
-        public Task<ApiResponse<Code>> GetAuthorizationCode(AuthRequest authRequest)
+        public Task<RepoResponse<Code>> GetAuthorizationCode(AuthRequest authRequest)
         {
-            ApiResponse<Code> resp;
+            RepoResponse<Code> resp;
 
             try
             {
@@ -43,7 +43,7 @@ namespace Hexa.Data.Repositories
 
             catch (Exception ex)
             {
-                resp = new ApiResponse<Code>
+                resp = new RepoResponse<Code>
                 {
                     success = false,
                     message = ex.Message
@@ -53,9 +53,9 @@ namespace Hexa.Data.Repositories
             return Task.FromResult(resp);
         }
 
-        public Task<ApiResponse<Token>> GetAccessToken(TokenRequest tokenRequest)
+        public Task<RepoResponse<Token>> GetAccessToken(TokenRequest tokenRequest)
         {
-            ApiResponse<Token> resp;
+            RepoResponse<Token> resp;
             try
             {
                 var a = (from codes in _dbContext.AuthCodes
@@ -81,7 +81,7 @@ namespace Hexa.Data.Repositories
 
             catch (Exception ex)
             {
-                resp = new ApiResponse<Token>
+                resp = new RepoResponse<Token>
                 {
                     success = false,
                     message = ex.Message
@@ -98,7 +98,7 @@ namespace Hexa.Data.Repositories
 
 
 
-        public Task<ApiResponse<Application>> GetApplicationByClientId(string clientId)
+        public Task<RepoResponse<Application>> GetApplicationByClientId(string clientId)
         {
 
 
@@ -112,9 +112,9 @@ namespace Hexa.Data.Repositories
                 throw new Exception("Data issue - client id violation");
             }
 
-            ApiResponse<Application> resp;
+            RepoResponse<Application> resp;
 
-            resp = new ApiResponse<Application>
+            resp = new RepoResponse<Application>
             {
                 success = true,
                 message = "",
@@ -123,7 +123,7 @@ namespace Hexa.Data.Repositories
             return Task.FromResult(resp);
         }
 
-        public Task<ApiResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList)
+        public Task<RepoResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList)
         {
 
             var sl = scopeList.ToArray();
@@ -141,9 +141,9 @@ namespace Hexa.Data.Repositories
                 throw new OverflowException();
             }
 
-            ApiResponse<List<Scope>> resp;
+            RepoResponse<List<Scope>> resp;
 
-            resp = new ApiResponse<List<Scope>>
+            resp = new RepoResponse<List<Scope>>
             {
                 success = true,
                 message = "",

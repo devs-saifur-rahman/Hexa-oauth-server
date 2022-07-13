@@ -7,13 +7,13 @@ namespace Hexa.Data.Repositories
     {
        
 
-        Task<ApiResponse<Code>> GetAuthorizationCode(AuthRequest authRequest);
+        Task<RepoResponse<Code>> GetAuthorizationCode(AuthRequest authRequest);
 
-        Task<ApiResponse<Token>> GetAccessToken(TokenRequest tokenRequest);
+        Task<RepoResponse<Token>> GetAccessToken(TokenRequest tokenRequest);
 
         Task SaveChanges();
-        Task<ApiResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList);
-        Task<ApiResponse<Application>> GetApplicationByClientId(string clientId);
+        Task<RepoResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList);
+        Task<RepoResponse<Application>> GetApplicationByClientId(string clientId);
 
     }
 }

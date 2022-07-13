@@ -23,13 +23,19 @@ namespace Hexa.Web.Controllers
         private readonly AppDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationRepo _authRepo;
+        private readonly IAccountRepo _accRepo;
         private readonly IMapper _mapper;
 
-        public AccountController(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor, IAuthorizationRepo authRepo, IMapper mapper)
+        public AccountController(AppDbContext dbContext, 
+            IHttpContextAccessor httpContextAccessor,
+            IAuthorizationRepo authRepo,
+            IAccountRepo accRepo, 
+            IMapper mapper)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
             _authRepo = authRepo;
+            _accRepo = accRepo;
             _mapper = mapper;
         }
 
@@ -53,21 +59,13 @@ namespace Hexa.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var exisitngUser = _dbContext.Users.Where(query => query.Email.Equals(model.Email)).SingleOrDefault();
+                var userExists = await _accRepo.CheckIfUserExistByMail(model.Email);
 
-                if (exisitngUser == null)
+                if (!userExists.data)
                 {
-
-                    var rad = RandomNumberGenerator.Create();
-                    byte[] b = new byte[4];
-                    rad.GetNonZeroBytes(b);
-
                     User user = _mapper.Map<RegisterUserDTO, User>(model);
-                    user.Salt = BitConverter.ToInt32(b).ToString();
-                    user.Password = ComputeHash(model.Password, user.Salt);
+                    await _accRepo.Register(user);
 
-                    _dbContext.Add(user);
-                    await _dbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Login));
                 }
                 ///TODO : Add sweetalert pop or some proper message in register page
@@ -91,44 +89,34 @@ namespace Hexa.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginUserDTO model, string returnUrl)
         {
-            var user = _dbContext.Users.Where(query => query.Email.Equals(model.Email)).SingleOrDefault();
-            if (user == null)
+            //var user = _dbContext.Users.Where(query => query.Email.Equals(model.Email)).SingleOrDefault();
+            var userData = await _accRepo.Login(model);
+
+            if (!userData.success)
             {
+                ViewBag.ErrorMessage = userData.message;
                 return View("Login", model);
             }
             else
             {
-                if (ComputeHash(model.Password, user.Salt) != user.Password)
-                {
-                    ViewBag.ErrorMessage = "Password Not Matching";
-                    return View("Login", model);
-                }
-                if (!user.IsActive)
-                {
-                    ViewBag.ErrorMessage = "User is not active";
-                    return View("Login", model);
-                }
+                var user = userData.data;
 
                 //set cookies - authoerize
 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim("FullName", user.Name),
-                    new Claim(ClaimTypes.Role, "Administrator"),
-                    new Claim("UserId",user.UserId.ToString())
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.NameIdentifier,user.UserId.ToString())
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var authProperties = new AuthenticationProperties { };
+                var authProperties = new AuthenticationProperties();
 
+                _httpContextAccessor.HttpContext.Session.Set<LoginUserDTO>("userInfo", model);
 
                 await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-                _httpContextAccessor.HttpContext.Session.Set<int>("User ID", user.UserId);
-                _httpContextAccessor.HttpContext.Session.Set("claim", claims);
-
 
                 if (String.IsNullOrEmpty(returnUrl))
                 {
@@ -149,7 +137,7 @@ namespace Hexa.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            return RedirectToAction(actionName: "Login", controllerName: "Account");
+            return View("Login");
         }
         #endregion
 
@@ -238,15 +226,5 @@ namespace Hexa.Web.Controllers
         }
         #endregion
 
-        #region Helper functions
-
-        public string ComputeHash(string toHash, string salt)
-        {
-            var byteResult = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(toHash), Encoding.UTF8.GetBytes(salt), 10000);
-            return Convert.ToBase64String(byteResult.GetBytes(24));
-        }
-
-
-        #endregion
     }
 }

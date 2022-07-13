@@ -23,6 +23,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
 builder.Services.AddScoped<IAuthorizationRepo, AuthorizationRepo>();
+builder.Services.AddScoped<IAccountRepo, AccountRepo>();
+builder.Services.AddScoped<IApplicationRepo, ApplicationRepo>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
@@ -39,7 +41,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options=>
+builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(10);
     options.Cookie.HttpOnly = true;
@@ -93,7 +95,7 @@ app.UseAuthorization();
 app.UseSession();
 
 app.MapControllerRoute(
-    name: "default",                                             
+    name: "default",
     pattern: "{controller=Account}/{action=Register}/{id?}");
 
 app.Run();

@@ -17,11 +17,13 @@
                 <input type="password" asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
+            <span class="text-danger">@ViewBag.ErrorMessage</span>
             <div class="form-group">
                 <input type="submit" value="Login" class="btn btn-primary" />
             </div>
         </form>
     </div>
+
 </div>
 
 <div>
