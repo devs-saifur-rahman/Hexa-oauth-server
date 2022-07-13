@@ -81,32 +81,10 @@ namespace Hexa.Web.Controllers
             return View();
         }
 
-        /*
-
-         [HttpPost]
-
- public IActionResult AddMyStuffBatches(List<MyStuffBatch> batches,[FromQuery] string timestamp, [FromQuery] string apiKey)
-
-
-         */
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(
-            [Bind("Email", "Password")] User model, string returnUrl
-            )
-        {
-
-
-
-            //string queryString = WebUtility.UrlDecode(hReturnUrl);
-            //var k = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(queryString);
-
-            ///TODO:  needs hash checking on password
-
-
-
-            var user = _dbContext.Users.Where(query => query.Email.Equals(model.Email)).SingleOrDefault();
+        public async Task<IActionResult> Login(LoginUserDTO model, string returnUrl)
+        {   var user = _dbContext.Users.Where(query => query.Email.Equals(model.Email)).SingleOrDefault();
 
 
 
@@ -119,8 +97,8 @@ namespace Hexa.Web.Controllers
             {
                 if (ComputeHash(model.Password, user.Salt) != user.Password)
                 {
-                    return Problem("Password Not Matching");
-                    // return View("Login", model);
+                    //return Problem("Password Not Matching");
+                    return View("Login", model);
                 }
 
                 //set cookies - authoerize
@@ -141,6 +119,7 @@ namespace Hexa.Web.Controllers
                 await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                 _httpContextAccessor.HttpContext.Session.Set<int>("User ID", user.UserId);
+                _httpContextAccessor.HttpContext.Session.Set("claim", claims);
 
 
                 if (String.IsNullOrEmpty(returnUrl))
@@ -148,9 +127,7 @@ namespace Hexa.Web.Controllers
                     return RedirectToAction(actionName: "Index", controllerName: "Applications");
                 }
                 {
-
                     return LocalRedirect(returnUrl);
-
                 }
 
 

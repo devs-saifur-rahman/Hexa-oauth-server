@@ -93,7 +93,7 @@ app.UseAuthorization();
 app.UseSession();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{param?}");
+    name: "default",                                             
+    pattern: "{controller=Account}/{action=Register}/{id?}");
 
 app.Run();

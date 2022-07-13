@@ -11,12 +11,12 @@ namespace Hexa.Web.Controllers
     public class ApplicationsController : Controller
     {
         private readonly AppDbContext _dbContext;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApplicationsController(AppDbContext dbContext, IHttpContextAccessor httpContext)
+        public ApplicationsController(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         { 
             _dbContext = dbContext;
-            _httpContext = httpContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -66,7 +66,7 @@ namespace Hexa.Web.Controllers
                     ApplicationID = model.ApplicationID,
                     Name = model.Name,
                     Details = model.Details,
-                    UserId = _httpContext.HttpContext.Session.Get<int>("User Id"),
+                    UserId = _httpContextAccessor.HttpContext.Session.Get<int>("User Id"),
                     Url = model.Url,
                     Logo = model.Logo
                 });
