@@ -19,7 +19,7 @@ namespace Hexa.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IApplicationRepo _applicationRepo;
 
-        public ApplicationsController(AppDbContext dbContext, IMapper mapper, 
+        public ApplicationsController(AppDbContext dbContext, IMapper mapper,
             IHttpContextAccessor httpContextAccessor, IApplicationRepo applicationRepo)
         {
             _dbContext = dbContext;
@@ -62,29 +62,14 @@ namespace Hexa.Web.Controllers
             return View();
         }
 
-        // POST: Applications/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromBody] NewApplicationWthRdrctDTO model)
+        public async Task<IActionResult> Create(NewApplicationWthRdrctDTO model)
         {
             if (ModelState.IsValid)
             {
-                //_dbContext.Add(new Application
-                //{
-                //    ApplicationID = model.ApplicationID,
-                //    Name = model.Name,
-                //    Details = model.Details,
-                //    UserId = _httpContextAccessor.HttpContext.Session.Get<int>("User Id"),
-                //    Url = model.Url,
-                //    Logo = model.Logo
-                //});
-                //await _dbContext.SaveChangesAsync();
 
-
-                Application app = _mapper.Map<NewApplicationDTO,Application>(model.application);
-                //List<ScopeDTO> scopesDTO = _mapper.Map<List<Scope>, List<ScopeDTO>>(scopesList.data);
+                Application app = _mapper.Map<NewApplicationDTO, Application>(model.application);
 
                 await _applicationRepo.CreateApplicationAsync(app, model.redirectURI);
 

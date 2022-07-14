@@ -16,13 +16,35 @@ namespace Hexa.Data.Repositories
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Task CreateApplicationAsync(Application app, List<String> urls)
+        public async Task CreateApplicationAsync(Application app, string url)
         {
-            
+            try
+            {
 
-            _dbContext.Applications.AddAsync(app);
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            throw new NotImplementedException();
+                app.UserId = int.Parse(userId);
+
+
+                var k = await _dbContext.Applications.AddAsync(app);
+
+                await SaveChangesAsync();
+
+                var uri = new RedirectURI()
+                {
+                    IsActive = true,
+                    URI = url,
+                    ApplicationID = app.ApplicationID
+                };
+
+                await _dbContext.RedirectURIs.AddAsync(uri);
+
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                var s = ex.Message;
+            }
         }
 
         public Task CreateRedirectUrlAsync(RedirectURI redirectURIs)
