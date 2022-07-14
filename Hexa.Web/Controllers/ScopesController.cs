@@ -2,35 +2,51 @@
 using Microsoft.EntityFrameworkCore;
 using Hexa.Data.DB;
 using Hexa.Data.Models.oauth;
+using Hexa.Data.Repositories;
+using AutoMapper;
+using Hexa.Data.DTOs;
 
 namespace Hexa.Web.Controllers
 {
     public class ScopesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _dbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IScopeRepo _scopeRepo;
+        private readonly IMapper _mapper;
 
-        public ScopesController(AppDbContext context)
+        public ScopesController(AppDbContext dbContext,IHttpContextAccessor httpContextAccessor, IMapper mapper, IScopeRepo scopeRepo)
         {
-            _context = context;
+            _dbContext = dbContext;
+            _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+            _scopeRepo = scopeRepo;
         }
 
         // GET: Scopes
         public async Task<IActionResult> Index()
         {
-              return _context.Scopes != null ? 
-                          View(await _context.Scopes.ToListAsync()) :
-                          Problem("Entity set 'HexaDbContext.Scopes'  is null.");
+            //return _dbContext.Scopes != null ? 
+            //            View(await _dbContext.Scopes.ToListAsync()) :
+            //            Problem("Entity set 'HexaDbContext.Scopes'  is null.");
+
+            
+            
+           List<ScopeDTO> listScope = _mapper.Map<List<Scope>, List<ScopeDTO>>(await _scopeRepo.GetScopesAsync());
+
+            return View(listScope);
+
         }
 
         // GET: Scopes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Scopes == null)
+            if (id == null || _dbContext.Scopes == null)
             {
                 return NotFound();
             }
 
-            var scope = await _context.Scopes
+            var scope = await _dbContext.Scopes
                 .FirstOrDefaultAsync(m => m.ScopeId == id);
             if (scope == null)
             {
@@ -55,8 +71,8 @@ namespace Hexa.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(scope);
-                await _context.SaveChangesAsync();
+                _dbContext.Add(scope);
+                await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(scope);
@@ -65,12 +81,12 @@ namespace Hexa.Web.Controllers
         // GET: Scopes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Scopes == null)
+            if (id == null || _dbContext.Scopes == null)
             {
                 return NotFound();
             }
 
-            var scope = await _context.Scopes.FindAsync(id);
+            var scope = await _dbContext.Scopes.FindAsync(id);
             if (scope == null)
             {
                 return NotFound();
@@ -94,8 +110,8 @@ namespace Hexa.Web.Controllers
             {
                 try
                 {
-                    _context.Update(scope);
-                    await _context.SaveChangesAsync();
+                    _dbContext.Update(scope);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,12 +132,12 @@ namespace Hexa.Web.Controllers
         // GET: Scopes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Scopes == null)
+            if (id == null || _dbContext.Scopes == null)
             {
                 return NotFound();
             }
 
-            var scope = await _context.Scopes
+            var scope = await _dbContext.Scopes
                 .FirstOrDefaultAsync(m => m.ScopeId == id);
             if (scope == null)
             {
@@ -136,23 +152,23 @@ namespace Hexa.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Scopes == null)
+            if (_dbContext.Scopes == null)
             {
                 return Problem("Entity set 'HexaDbContext.Scopes'  is null.");
             }
-            var scope = await _context.Scopes.FindAsync(id);
+            var scope = await _dbContext.Scopes.FindAsync(id);
             if (scope != null)
             {
-                _context.Scopes.Remove(scope);
+                _dbContext.Scopes.Remove(scope);
             }
             
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ScopeExists(int id)
         {
-          return (_context.Scopes?.Any(e => e.ScopeId == id)).GetValueOrDefault();
+          return (_dbContext.Scopes?.Any(e => e.ScopeId == id)).GetValueOrDefault();
         }
     }
 }

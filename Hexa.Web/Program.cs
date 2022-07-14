@@ -25,6 +25,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<IAuthorizationRepo, AuthorizationRepo>();
 builder.Services.AddScoped<IAccountRepo, AccountRepo>();
 builder.Services.AddScoped<IApplicationRepo, ApplicationRepo>();
+builder.Services.AddScoped<IScopeRepo, ScopeRepo>();
+
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
