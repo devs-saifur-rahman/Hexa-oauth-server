@@ -1,9 +1,10 @@
 ﻿namespace Hexa.Data.DTOs
 {
-	public class NewApplicationDTO
-	{
-		public ApplicationDTO application { get; set; }
-		public List<RedirectURIDTO> redirectURIs { get; set; }
-		
-	}
+    public class NewApplicationDTO
+    {
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public string Url { get; set; }
+        public string Logo { get; set; }
+    }
 }

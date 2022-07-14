@@ -8,7 +8,7 @@ namespace Hexa.Data.Repositories
         Task<List<Application>> GetApplicationsAsync();
         Task<Application> GetApplicationById(int applicationId);
 
-        Task CreateApplicationAsync(NewApplicationDTO application);
+        Task CreateApplicationAsync(Application app, List<String> urls);
         Task UpdateApplicationAsync(ApplicationDTO application);
         // Add new url after 
         Task CreateRedirectUrlAsync(RedirectURI redirectURIs);

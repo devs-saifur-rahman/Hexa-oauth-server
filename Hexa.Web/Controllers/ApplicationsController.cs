@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Hexa.Data.Models.oauth;
 using System.Security.Claims;
 using Hexa.Data.Repositories;
+using Hexa.Data.DTOs;
+using AutoMapper;
 
 namespace Hexa.Web.Controllers
 {
@@ -13,12 +15,15 @@ namespace Hexa.Web.Controllers
     public class ApplicationsController : Controller
     {
         private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IApplicationRepo _applicationRepo;
 
-        public ApplicationsController(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor, IApplicationRepo applicationRepo)
+        public ApplicationsController(AppDbContext dbContext, IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor, IApplicationRepo applicationRepo)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _applicationRepo = applicationRepo;
         }
@@ -62,20 +67,29 @@ namespace Hexa.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromBody] Application model)
+        public async Task<IActionResult> Create([FromBody] NewApplicationWthRdrctDTO model)
         {
             if (ModelState.IsValid)
             {
-                _dbContext.Add(new Application
-                {
-                    ApplicationID = model.ApplicationID,
-                    Name = model.Name,
-                    Details = model.Details,
-                    UserId = _httpContextAccessor.HttpContext.Session.Get<int>("User Id"),
-                    Url = model.Url,
-                    Logo = model.Logo
-                });
-                await _dbContext.SaveChangesAsync();
+                //_dbContext.Add(new Application
+                //{
+                //    ApplicationID = model.ApplicationID,
+                //    Name = model.Name,
+                //    Details = model.Details,
+                //    UserId = _httpContextAccessor.HttpContext.Session.Get<int>("User Id"),
+                //    Url = model.Url,
+                //    Logo = model.Logo
+                //});
+                //await _dbContext.SaveChangesAsync();
+
+
+                Application app = _mapper.Map<NewApplicationDTO,Application>(model.application);
+                //List<ScopeDTO> scopesDTO = _mapper.Map<List<Scope>, List<ScopeDTO>>(scopesList.data);
+
+                await _applicationRepo.CreateApplicationAsync(app, model.redirectURI);
+
+                await _applicationRepo.SaveChangesAsync();
+
                 return RedirectToAction(actionName: "Index", controllerName: "Applications");
             }
             return View(model);

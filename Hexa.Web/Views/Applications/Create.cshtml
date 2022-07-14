@@ -1,4 +1,4 @@
-﻿@model Hexa.Data.Models.oauth.Application
+﻿@model Hexa.Data.DTOs.NewApplicationWthRdrctDTO
 
 @{
     ViewData["Title"] = "Create";
@@ -9,34 +9,41 @@
 <h4>Application</h4>
 <hr />
 <div class="row">
+ 
     <div class="col-md-4">
         <form asp-action="Create">
+            <h3>Application: </h3>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="application.Name" class="control-label"></label>
+                <input asp-for="application.Name" class="form-control" />
+                <span asp-validation-for="application.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Details" class="control-label"></label>
-                <input asp-for="Details" class="form-control" />
-                <span asp-validation-for="Details" class="text-danger"></span>
+                <label asp-for="application.Details" class="control-label"></label>
+                <input asp-for="application.Details" class="form-control" />
+                <span asp-validation-for="application.Details" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Url" class="control-label"></label>
-                <input asp-for="Url" class="form-control" />
-                <span asp-validation-for="Url" class="text-danger"></span>
+                <label asp-for="application.Url" class="control-label"></label>
+                <input asp-for="application.Url" class="form-control" />
+                <span asp-validation-for="application.Url" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Logo" class="control-label"></label>
-                <input asp-for="Logo" class="form-control" />
-                <span asp-validation-for="Logo" class="text-danger"></span>
+                <label asp-for="application.Logo" class="control-label"></label>
+                <input asp-for="application.Logo" class="form-control" />
+                <span asp-validation-for="application.Logo" class="text-danger"></span>
             </div>
+            <h3>Redirect Urls</h3>
+            
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                <label asp-for="redirectURI" class="control-label"></label>
+                <input asp-for="redirectURI" class="form-control" />
+                <span asp-validation-for="redirectURI" class="text-danger"></span>
             </div>
+        
+
+            
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

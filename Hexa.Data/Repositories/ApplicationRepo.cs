@@ -16,8 +16,12 @@ namespace Hexa.Data.Repositories
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Task CreateApplicationAsync(NewApplicationDTO application)
+        public Task CreateApplicationAsync(Application app, List<String> urls)
         {
+            
+
+            _dbContext.Applications.AddAsync(app);
+
             throw new NotImplementedException();
         }
 
@@ -26,8 +30,11 @@ namespace Hexa.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task DeactivateApplicationAsync(int id)
+        public async Task DeactivateApplicationAsync(int id)
         {
+
+            var app = await _dbContext.Applications.SingleAsync(app => app.ApplicationID == id);
+
             throw new NotImplementedException();
         }
 
@@ -36,9 +43,9 @@ namespace Hexa.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Application> GetApplicationById(int applicationId)
+        public async Task<Application> GetApplicationById(int applicationId)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Applications.Where(app => app.ApplicationID == applicationId).FirstOrDefaultAsync();
         }
 
         public async Task<List<Application>> GetApplicationsAsync()
