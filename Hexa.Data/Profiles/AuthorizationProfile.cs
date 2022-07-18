@@ -26,6 +26,10 @@ namespace Hexa.Api.Profiles
             CreateMap<NewApplicationDTO, Application>();
             CreateMap<Application, NewApplicationDTO>();
 
+            CreateMap<RedirectURIDTO, RedirectURI>();
+            CreateMap<RedirectURI, RedirectURIDTO>();
+
+
         }
     }
 }
