@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Web;
 using AutoMapper;
+using Newtonsoft.Json;
 
 namespace Hexa.Web.Controllers
 {
@@ -185,7 +186,7 @@ namespace Hexa.Web.Controllers
 
 
             //TODO - store the request in DB to save the state and have a request id
-   
+
             ApplicationDetailsDTO application = await _appRepo.GetApplicationByClientId(client_id);
 
             if (application.Application.ApplicationID < 1)
@@ -193,6 +194,26 @@ namespace Hexa.Web.Controllers
                 ///TODO : forward to Error page
                 throw new Exception("No Application found");
             }
+
+            //store the request in db 
+
+
+            AuthorizationRequest authRequest = await _authRepo.SaveAuthorizationRequest(new AuthorizationRequest
+            {
+                ClientID = client_id,
+                UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                ApplicationID = application.Application.ApplicationID,
+                ResponseType = response_type,
+                RedirectUri = redirect_uri,
+                Scopes = scope,
+                ApplicationState = state,
+                RequestStatus = "pending"
+            });
+
+            // TODO - safer way to store and get authRequest.ID so that front end edit cannot change it 
+
+            //  _httpContextAccessor.HttpContext.Session.Set<string>("AuthorizationRequestId", JsonContent.Create(authRequest).ToString());
+
 
             List<string> reqScopes = scope.Split(' ').ToList();
 
@@ -204,27 +225,34 @@ namespace Hexa.Web.Controllers
                 throw new Exception("Scope does not match");
             }
 
-
             // if all ok , show the auth prompt 
-            return View("Authorize", application);
+            AuthorizePromptDTO authorizePromptDTO = new AuthorizePromptDTO
+            {
+                Application = application.Application,
+                RedirectUrl = application.RedirectUrl,
+                AssignedScopes = application.AssignedScopes,
+                AuthorizationRequestID = authRequest.AuthorizationRequestId
+            };
+
+            return View("Authorize", authorizePromptDTO);
         }
 
         [HttpPost("oauth/v2/auth")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Authorize(string hasAllowed)
+        public async Task<IActionResult> AcceptAuthorize(string authorizationRequestID, string hasAllowed)
         {
 
             if (hasAllowed.ToLower() == "allow")
             {
 
-
-
+                var k = await _authRepo.GetAuthorizationCode(int.Parse(authorizationRequestID));
+                                                                                         
 
 
             }
             else
             {
-
+                //          var k = _auth
             }
 
             return RedirectToAction(actionName: "Index", controllerName: "Account");

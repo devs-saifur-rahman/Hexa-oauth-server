@@ -15,16 +15,13 @@ namespace Hexa.Data.Repositories
         }
 
 
-        public Task<RepoResponse<Code>> GetAuthorizationCode(AuthRequest authRequest)
+        public async Task<RepoResponse<Code>> GetAuthorizationCode(int id)
         {
             RepoResponse<Code> resp;
 
             try
             {
-                var a = (from secret in _dbContext.ClientSecrets
-                         join application in _dbContext.Applications on secret.ApplicationID equals application.ApplicationID
-                         where secret.ClientID == authRequest.client_id
-                         select secret).AsNoTracking();
+                AuthorizationRequest authRequest = await _dbContext.AuthorizationRequests.Where(x => x.AuthorizationRequestId == id).AsNoTracking().FirstOrDefaultAsync();
 
 
 
@@ -35,7 +32,7 @@ namespace Hexa.Data.Repositories
                     data = new Code
                     {
                         code = "Not Implemented",
-                        state = authRequest.state
+                        state = authRequest.ApplicationState
                     }
                 };
 
@@ -50,7 +47,7 @@ namespace Hexa.Data.Repositories
                 };
             }
 
-            return Task.FromResult(resp);
+            return resp;
         }
 
         public Task<RepoResponse<Token>> GetAccessToken(TokenRequest tokenRequest)
@@ -123,6 +120,13 @@ namespace Hexa.Data.Repositories
                 data = scopes
             };
             return Task.FromResult(resp);
+        }
+
+        public async Task<AuthorizationRequest> SaveAuthorizationRequest(AuthorizationRequest authRequest)
+        {
+            await _dbContext.AuthorizationRequests.AddAsync(authRequest);
+            await SaveChanges();
+            return authRequest;
         }
     }
 }

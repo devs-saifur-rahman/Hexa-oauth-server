@@ -1,43 +1,49 @@
-﻿@model Hexa.Data.DTOs.ApplicationDetailsDTO
+﻿@model Hexa.Data.DTOs.AuthorizePromptDTO
 
 @{
-    ViewData["Title"] = "Authorize";
+	ViewData["Title"] = "Authorize";
 }
 <div class="row">
-    <div class="col-md-4">
-        <form method="post">
+	<div class="col-md-4">
 
-            <img src="@Model.Application.Logo" width="100" />
+		<form method="post" >
+
+			<img src="@Model.Application.Logo" width="100" />
 
 
-            <h2>@Model.Application.Name</h2>
-            <h3>@Model.Application.Details</h3>
-            <b>The following permission will be provided to the <a href="@Model.Application.Url">@Model.Application.Name</a></b>
+			<h2>@Model.Application.Name</h2>
+			<h3>@Model.Application.Details</h3>
+			<b>The following permission will be provided to the <a href="@Model.Application.Url">@Model.Application.Name</a></b>
 
-            <div class="form-group">
+			<div class="form-group">
 
-                <ul class="form-control">
-                    @foreach (var scope in @Model.AssignedScopes)
-                    {
-                        <li>
-                            @scope.Name - @scope.Description
-                        </li>
-                    }
-                </ul>
-            </div>
-            <div class="form-group">
-                <input type="submit" name="HasAllowed" id="Allow" value="Allow" title="Allow" class="btn btn-primary" />
-                <input type="submit" name="HasAllowed" id="Deny"  value="Deny" title="Deny" class="btn btn-secondary" />
-            </div>
-        </form>
-    </div>
+				<ul class="form-control">
+					@foreach (var scope in @Model.AssignedScopes)
+					{
+						<li>
+							@scope.Name - @scope.Description
+						</li>
+					}
+				</ul>
+			</div>
+			<div>
+				<input type="hidden" asp-for="@Model.AuthorizationRequestID" value="@Model.AuthorizationRequestID" name="AuthorizationRequestID" />
+			</div>
+			<div class="form-group">
+				<input type="submit" name="HasAllowed" id="Allow" value="Allow" title="Allow" class="btn btn-primary" />
+				<input type="submit" name="HasAllowed" id="Deny" value="Deny" title="Deny" class="btn btn-secondary" />
+			</div>
+		</form>
+		
+
+	</div>
 </div>
 
 
 
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
     }

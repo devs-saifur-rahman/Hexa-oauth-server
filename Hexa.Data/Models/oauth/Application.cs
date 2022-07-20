@@ -19,5 +19,6 @@ namespace Hexa.Data.Models.oauth
 
 
         public ICollection<ApplicationScope> ApplicationScopes { get; set; }
+        //public ICollection<AuthorizationRequest> AuthorizationRequest { get; set; }
     }
 }
