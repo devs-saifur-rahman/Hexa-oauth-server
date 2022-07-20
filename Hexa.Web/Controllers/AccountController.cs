@@ -24,18 +24,21 @@ namespace Hexa.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationRepo _authRepo;
         private readonly IAccountRepo _accRepo;
+        private readonly IApplicationRepo _appRepo;
         private readonly IMapper _mapper;
 
-        public AccountController(AppDbContext dbContext, 
+        public AccountController(AppDbContext dbContext,
             IHttpContextAccessor httpContextAccessor,
             IAuthorizationRepo authRepo,
-            IAccountRepo accRepo, 
+            IAccountRepo accRepo,
+            IApplicationRepo appRepo,
             IMapper mapper)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
             _authRepo = authRepo;
             _accRepo = accRepo;
+            _appRepo = appRepo;
             _mapper = mapper;
         }
 
@@ -158,10 +161,6 @@ namespace Hexa.Web.Controllers
             //    {"state","state1"},
             //};
 
-            //var newUrl = new Uri(QueryHelpers.AddQueryString(url, param));
-
-            //        //sample call
-
             /**
             https://localhost:7190/
             oauth/v2/auth
@@ -172,7 +171,7 @@ namespace Hexa.Web.Controllers
             scope='sc1 sc2'
             state='state1'	
                 to generate this 
-            //https://localhost:7190/oauth/v2/auth?response_type=authorization_grant&client_id=some.local-1@hexa.sec&redirect_uri=https%3A%2F%2Fsaggoogle.com&scope=sc1 sc2&state=state1
+            //https://localhost:7190/oauth/v2/auth?response_type=authorization_grant&client_id=some.local-1@hexa.sec&redirect_uri=https%3A%2F%2Fsaggoogle.com&scope=Scope_Name_1 Scope_Name_2&state=state1
             */
 
             AuthRequest reqModel = new AuthRequest
@@ -185,23 +184,29 @@ namespace Hexa.Web.Controllers
             };
 
 
-            var application = await _authRepo.GetApplicationByClientId(client_id);
+            //TODO - store the request in DB to save the state and have a request id
+   
+            ApplicationDetailsDTO application = await _appRepo.GetApplicationByClientId(client_id);
 
-            var scopesList = await _authRepo.GetApplicationScopes(client_id, scope.ToLower().Split(' ').ToList());
-
-            ApplicationDTO appDTO = _mapper.Map<Application, ApplicationDTO>(application.data);
-            List<ScopeDTO> scopesDTO = _mapper.Map<List<Scope>, List<ScopeDTO>>(scopesList.data);
-
-
-            ApplicationScopesDTO applicationScopesDTO = new ApplicationScopesDTO
+            if (application.Application.ApplicationID < 1)
             {
-                Application = appDTO,
-                Scopes = scopesDTO
-            };
+                ///TODO : forward to Error page
+                throw new Exception("No Application found");
+            }
+
+            List<string> reqScopes = scope.Split(' ').ToList();
+
+            var scopeMatched = application.AssignedScopes.Select(x => x.Name).ToList().Intersect(reqScopes).Count() == reqScopes.Count();
+
+            if (!scopeMatched)
+            {
+                ///TODO : forward to Error page
+                throw new Exception("Scope does not match");
+            }
 
 
-
-            return View("Authorize", applicationScopesDTO);
+            // if all ok , show the auth prompt 
+            return View("Authorize", application);
         }
 
         [HttpPost("oauth/v2/auth")]

@@ -1,4 +1,4 @@
-﻿@model Hexa.Data.DTOs.ApplicationScopesDTO
+﻿@model Hexa.Data.DTOs.ApplicationDetailsDTO
 
 @{
     ViewData["Title"] = "Authorize";
@@ -17,7 +17,7 @@
             <div class="form-group">
 
                 <ul class="form-control">
-                    @foreach (var scope in @Model.Scopes)
+                    @foreach (var scope in @Model.AssignedScopes)
                     {
                         <li>
                             @scope.Name - @scope.Description

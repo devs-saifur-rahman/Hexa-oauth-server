@@ -96,33 +96,6 @@ namespace Hexa.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-
-
-        public Task<RepoResponse<Application>> GetApplicationByClientId(string clientId)
-        {
-
-
-            List<Application> application = (from apps in _dbContext.Applications
-                                       join clscrt in _dbContext.ClientSecrets on apps.ApplicationID equals clscrt.ApplicationID
-                                       where clscrt.ClientID == clientId
-                                       select apps
-                                       ).AsNoTracking().ToList<Application>();
-            if(application.Count != 1)
-            {
-                throw new Exception("Data issue - client id violation");
-            }
-
-            RepoResponse<Application> resp;
-
-            resp = new RepoResponse<Application>
-            {
-                success = true,
-                message = "",
-                data = application[0]
-            };
-            return Task.FromResult(resp);
-        }
-
         public Task<RepoResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList)
         {
 

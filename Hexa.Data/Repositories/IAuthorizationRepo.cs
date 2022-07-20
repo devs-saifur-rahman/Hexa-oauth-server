@@ -13,7 +13,5 @@ namespace Hexa.Data.Repositories
 
         Task SaveChanges();
         Task<RepoResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList);
-        Task<RepoResponse<Application>> GetApplicationByClientId(string clientId);
-
     }
 }
