@@ -6,7 +6,7 @@ namespace Hexa.Data.Repositories
     public interface IApplicationRepo
     {
         Task<List<Application>> GetApplicationsAsync();
-        Task<Application> GetApplicationById(int applicationId);
+        Task<ApplicationDetailsDTO> GetApplicationById(int applicationId);
 
         Task CreateApplicationAsync(Application app, string url);
         Task UpdateApplicationAsync(ApplicationDTO application);

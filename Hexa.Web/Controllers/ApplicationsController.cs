@@ -39,19 +39,17 @@ namespace Hexa.Web.Controllers
         }
 
         // GET: Applications/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _dbContext.Applications == null)
-            {
-                return NotFound();
-            }
+            
+                ApplicationDetailsDTO application = await _applicationRepo.GetApplicationById(id);
 
-            var application = await _dbContext.Applications
-                .FirstOrDefaultAsync(m => m.ApplicationID == id);
-            if (application == null)
-            {
-                return NotFound();
-            }
+                if (application == null)
+                {
+                    return NotFound();
+                }
+
+            
 
             return View(application);
         }

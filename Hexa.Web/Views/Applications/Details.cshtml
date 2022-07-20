@@ -1,48 +1,48 @@
-﻿@model Hexa.Data.Models.oauth.Application
-
+﻿@model Hexa.Data.DTOs.ApplicationDetailsDTO
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Application Details";
 }
 
-<h1>Details</h1>
+<div class="row">
+    <div class="col-6">
+        <div class="row">
+            <div class="col-6">
+                @Model.Application.Name - @Model.Application.Details
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                WebSite: @Model.Application.Url
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <img src="@Model.Application.Logo" alt="@Model.Application.Name" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <input type="checkbox" id="RedirectUri" name="RedirectUri" value="Uri1" @(@Model.RedirectUrl.IsActive ? "checked" : "")>
+                <label for="RedirectUri"> @Model.RedirectUrl.URI </label><br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <ul>
 
-<div>
-    <h4>Application</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Details)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Details)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Url)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Url)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Logo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Logo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-    </dl>
-</div>
-<div>
+                    @foreach (var item in Model.AssignedScopes)
+                    {
+
+                        <li>@item.Name - @item.Description</li>
+
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    @*<div>
     <a asp-action="Edit" asp-route-id="@Model?.ApplicationID">Edit</a> |
     <a asp-action="Index">Back to List</a>
+    *@
 </div>
