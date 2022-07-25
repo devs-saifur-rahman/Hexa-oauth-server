@@ -15,39 +15,70 @@ namespace Hexa.Data.Repositories
         }
 
 
-        public async Task<RepoResponse<Code>> GetAuthorizationCode(int id)
+        public async Task<CodeDTO> GetAuthorizationCode(int id)
         {
-            RepoResponse<Code> resp;
-
             try
             {
-                AuthorizationRequest authRequest = await _dbContext.AuthorizationRequests.Where(x => x.AuthorizationRequestId == id).AsNoTracking().FirstOrDefaultAsync();
-
-
-
-                resp = new AuthResponse<Code>
-                {
-                    success = true,
-                    message = "",
-                    data = new Code
+                var authResponse = await _dbContext.AuthorizationRequests
+                    .Join(_dbContext.Applications, atr => atr.ApplicationID, app => app.ApplicationID, (atr, app) => new
                     {
-                        code = "Not Implemented",
-                        state = authRequest.ApplicationState
-                    }
+                        ApplicationID = app.ApplicationID,
+                        Name = app.Name,
+                        AuthorizationRequestId = atr.AuthorizationRequestId,
+                        ApplicationState = atr.ApplicationState,
+                        UserId = atr.UserId
+                    })
+                    .Join(_dbContext.RedirectURIs, a => a.ApplicationID, r => r.ApplicationID, (a, r) => new
+                    {
+
+                        Name = a.Name,
+                        AuthorizationRequestId = a.AuthorizationRequestId,
+                        RedirectUrl = r.URI,
+                        ApplicationState = a.ApplicationState,
+                        UserId = a.UserId,
+                        ApplicationID = a.ApplicationID,
+                        code = new Guid().ToString() + a.UserId 
+                    })
+                    .Where(x => x.AuthorizationRequestId == id)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+                /// ///+ "." + a.UserId + "-" + a.ApplicationID + "@oauth.v2.hexa.auth.server"
+
+                if (authResponse == null)
+                {
+                    throw new Exception("Corresponding request not found.");
+                }
+
+                AuthCode authCode = new AuthCode
+                {
+                    Code = authResponse.code,
+                    IsActive = true,
+                    IsAuthenticated = true,
+                    ApplicationID = authResponse.ApplicationID,
+                    UserId = authResponse.UserId
                 };
 
+                _dbContext.AuthCodes.Add(authCode);
+
+                await SaveChanges();
+
+                CodeDTO resp = new CodeDTO
+                {
+                    code = authCode.Code,
+                    state = authResponse.ApplicationState,
+                    success = true,
+                    redirect_url = authResponse.RedirectUrl
+                };
+
+                return resp;
             }
 
             catch (Exception ex)
             {
-                resp = new RepoResponse<Code>
-                {
-                    success = false,
-                    message = ex.Message
-                };
+                throw ex;
             }
 
-            return resp;
+
         }
 
         public Task<RepoResponse<Token>> GetAccessToken(TokenRequest tokenRequest)

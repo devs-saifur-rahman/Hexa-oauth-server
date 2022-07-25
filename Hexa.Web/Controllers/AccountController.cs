@@ -15,6 +15,8 @@ using System.Net;
 using System.Web;
 using AutoMapper;
 using Newtonsoft.Json;
+using System.Collections.Specialized;
+using Microsoft.Extensions.Primitives;
 
 namespace Hexa.Web.Controllers
 {
@@ -242,20 +244,38 @@ namespace Hexa.Web.Controllers
         public async Task<IActionResult> AcceptAuthorize(string authorizationRequestID, string hasAllowed)
         {
 
+
             if (hasAllowed.ToLower() == "allow")
             {
+                CodeDTO code = await _authRepo.GetAuthorizationCode(int.Parse(authorizationRequestID));
 
-                var k = await _authRepo.GetAuthorizationCode(int.Parse(authorizationRequestID));
-                                                                                         
+                if (code.success)
+                {
 
 
+                    Uri uri = new Uri(code.redirect_url);
+                    Dictionary<string, StringValues> parsedQueryString = QueryHelpers.ParseQuery(uri.Query);
+
+                    parsedQueryString.Add("code", code.code);
+                    parsedQueryString.Add("state", code.state);
+                    string queryString = QueryString.Create(parsedQueryString).ToString();
+                    string redirectionUrl = uri.Scheme + "://" + uri.Host + uri.AbsolutePath + queryString;
+
+                    return RedirectPermanent(redirectionUrl);
+                }
+                else
+                {
+                    return RedirectToAction(actionName: "Index", controllerName: "Account");
+                }
             }
             else
             {
                 //          var k = _auth
+
+                return RedirectToAction(actionName: "Index", controllerName: "Account");
             }
 
-            return RedirectToAction(actionName: "Index", controllerName: "Account");
+
         }
         #endregion
 

@@ -7,7 +7,7 @@ namespace Hexa.Data.Repositories
     {
        
 
-        Task<RepoResponse<Code>> GetAuthorizationCode(int id);
+        Task<CodeDTO> GetAuthorizationCode(int id);
 
         Task<RepoResponse<Token>> GetAccessToken(TokenRequest tokenRequest);
 
