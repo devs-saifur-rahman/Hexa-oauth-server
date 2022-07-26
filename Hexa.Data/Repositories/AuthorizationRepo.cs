@@ -53,42 +53,39 @@ namespace Hexa.Data.Repositories
             return Task.FromResult(resp);
         }
 
-        public Task<RepoResponse<Token>> GetAccessToken(TokenRequest tokenRequest)
+        public async Task<Token> GetAccessToken(TokenRequest tokenRequest)
         {
-            RepoResponse<Token> resp;
+            Token resp;
             try
             {
-                var a = (from codes in _dbContext.AuthCodes
+                AuthCode a = (AuthCode)(from codes in _dbContext.AuthCodes
                          join apps in _dbContext.Applications on codes.ApplicationID equals apps.ApplicationID
                          where codes.IsActive == true && codes.Code == tokenRequest.code
                          select codes
                     ).AsNoTracking();
 
+                //get and validate the code 
+                //get application scope
+                //generate access token & a refresh token (may be phase 2)
+                //store the userId,Application id, access token and refresh token
 
-                resp = new TokenResponse<Token>
+                string accessToken = Guid.NewGuid().ToString();
+
+                resp = new Token
                 {
-                    success = true,
-                    message = "",
-                    data = new Token
-                    {
-                        access_token = "Not Implemented",
-                        token_type = "Bearer",
-                        scope = "scope1 scope2"
-                    }
+                    access_token = accessToken,
+                    token_type = "Bearer",
+                    scope = "scope1 scope2"
                 };
 
             }
 
             catch (Exception ex)
             {
-                resp = new RepoResponse<Token>
-                {
-                    success = false,
-                    message = ex.Message
-                };
+                throw ex;
             }
 
-            return Task.FromResult(resp);
+            return resp;
         }
 
         public async Task SaveChanges()
@@ -103,11 +100,11 @@ namespace Hexa.Data.Repositories
 
 
             List<Application> application = (from apps in _dbContext.Applications
-                                       join clscrt in _dbContext.ClientSecrets on apps.ApplicationID equals clscrt.ApplicationID
-                                       where clscrt.ClientID == clientId
-                                       select apps
+                                             join clscrt in _dbContext.ClientSecrets on apps.ApplicationID equals clscrt.ApplicationID
+                                             where clscrt.ClientID == clientId
+                                             select apps
                                        ).AsNoTracking().ToList<Application>();
-            if(application.Count != 1)
+            if (application.Count != 1)
             {
                 throw new Exception("Data issue - client id violation");
             }
