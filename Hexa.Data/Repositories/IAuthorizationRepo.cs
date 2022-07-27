@@ -9,9 +9,9 @@ namespace Hexa.Data.Repositories
 
         Task<CodeDTO> GetAuthorizationCode(int id);
 
-        Task<RepoResponse<Token>> GetAccessToken(TokenRequest tokenRequest);
+        Task<BearerToken> GetBearerToken(TokenRequest tokenRequest);
 
-        Task SaveChanges();
+        Task SaveChangesAsync();
         Task<RepoResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList);
 
         Task<AuthorizationRequest>  SaveAuthorizationRequest(AuthorizationRequest authRequest);

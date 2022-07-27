@@ -272,11 +272,28 @@ namespace Hexa.Web.Controllers
             {
                 //          var k = _auth
 
-                return RedirectToAction(actionName: "Index", controllerName: "Account");
-            }
-
-
+            return RedirectToAction(actionName: "Index", controllerName: "Account");
         }
+
+        [HttpGet("api/v1/auth/token/access")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateAccessToken(TokenRequest tokenRequest)
+        {
+            var tokenResponse = await _authRepo.GetBearerToken(tokenRequest);
+
+
+            return Ok(tokenResponse);
+        }
+
+        [HttpGet("api/v1/auth/token/refresh")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefreshToken(string hasAllowed)
+        {
+
+
+            return RedirectToAction(actionName: "Index", controllerName: "Account");
+        }
+
         #endregion
 
     }
