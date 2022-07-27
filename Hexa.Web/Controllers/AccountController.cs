@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Web;
 using AutoMapper;
+using Newtonsoft.Json;
+using System.Collections.Specialized;
 using Microsoft.Extensions.Primitives;
 
 namespace Hexa.Web.Controllers
@@ -25,18 +27,21 @@ namespace Hexa.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationRepo _authRepo;
         private readonly IAccountRepo _accRepo;
+        private readonly IApplicationRepo _appRepo;
         private readonly IMapper _mapper;
 
         public AccountController(AppDbContext dbContext,
             IHttpContextAccessor httpContextAccessor,
             IAuthorizationRepo authRepo,
             IAccountRepo accRepo,
+            IApplicationRepo appRepo,
             IMapper mapper)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
             _authRepo = authRepo;
             _accRepo = accRepo;
+            _appRepo = appRepo;
             _mapper = mapper;
         }
 
@@ -159,10 +164,6 @@ namespace Hexa.Web.Controllers
             //    {"state","state1"},
             //};
 
-            //var newUrl = new Uri(QueryHelpers.AddQueryString(url, param));
-
-            //        //sample call
-
             /**
             https://localhost:7190/
             oauth/v2/auth
@@ -173,7 +174,7 @@ namespace Hexa.Web.Controllers
             scope='sc1 sc2'
             state='state1'	
                 to generate this 
-            //https://localhost:7190/oauth/v2/auth?response_type=authorization_grant&client_id=some.local-1@hexa.sec&redirect_uri=https%3A%2F%2Fsaggoogle.com&scope=sc1 sc2&state=state1
+            //https://localhost:7190/oauth/v2/auth?response_type=authorization_grant&client_id=some.local-1@hexa.sec&redirect_uri=https%3A%2F%2Fsaggoogle.com&scope=Scope_Name_1 Scope_Name_2&state=state1
             */
 
             AuthRequest reqModel = new AuthRequest
@@ -186,42 +187,90 @@ namespace Hexa.Web.Controllers
             };
 
 
-            var application = await _authRepo.GetApplicationByClientId(client_id);
+            //TODO - store the request in DB to save the state and have a request id
 
-            var scopesList = await _authRepo.GetApplicationScopes(client_id, scope.ToLower().Split(' ').ToList());
+            ApplicationDetailsDTO application = await _appRepo.GetApplicationByClientId(client_id);
 
-            ApplicationDTO appDTO = _mapper.Map<Application, ApplicationDTO>(application.data);
-            List<ScopeDTO> scopesDTO = _mapper.Map<List<Scope>, List<ScopeDTO>>(scopesList.data);
-
-
-            ApplicationScopesDTO applicationScopesDTO = new ApplicationScopesDTO
+            if (application.Application.ApplicationID < 1)
             {
-                Application = appDTO,
-                Scopes = scopesDTO
+                ///TODO : forward to Error page
+                throw new Exception("No Application found");
+            }
+
+            //store the request in db 
+
+
+            AuthorizationRequest authRequest = await _authRepo.SaveAuthorizationRequest(new AuthorizationRequest
+            {
+                ClientID = client_id,
+                UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                ApplicationID = application.Application.ApplicationID,
+                ResponseType = response_type,
+                RedirectUri = redirect_uri,
+                Scopes = scope,
+                ApplicationState = state,
+                RequestStatus = "pending"
+            });
+
+            // TODO - safer way to store and get authRequest.ID so that front end edit cannot change it 
+
+            //  _httpContextAccessor.HttpContext.Session.Set<string>("AuthorizationRequestId", JsonContent.Create(authRequest).ToString());
+
+
+            List<string> reqScopes = scope.Split(' ').ToList();
+
+            var scopeMatched = application.AssignedScopes.Select(x => x.Name).ToList().Intersect(reqScopes).Count() == reqScopes.Count();
+
+            if (!scopeMatched)
+            {
+                ///TODO : forward to Error page
+                throw new Exception("Scope does not match");
+            }
+
+            // if all ok , show the auth prompt 
+            AuthorizePromptDTO authorizePromptDTO = new AuthorizePromptDTO
+            {
+                Application = application.Application,
+                RedirectUrl = application.RedirectUrl,
+                AssignedScopes = application.AssignedScopes,
+                AuthorizationRequestID = authRequest.AuthorizationRequestId
             };
 
-
-
-            return View("Authorize", applicationScopesDTO);
+            return View("Authorize", authorizePromptDTO);
         }
 
         [HttpPost("oauth/v2/auth")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Authorize(string hasAllowed)
+        public async Task<IActionResult> AcceptAuthorize(string authorizationRequestID, string hasAllowed)
         {
+
 
             if (hasAllowed.ToLower() == "allow")
             {
+                CodeDTO code = await _authRepo.GetAuthorizationCode(int.Parse(authorizationRequestID));
+
+                if (code.success)
+                {
 
 
+                    Uri uri = new Uri(code.redirect_url);
+                    Dictionary<string, StringValues> parsedQueryString = QueryHelpers.ParseQuery(uri.Query);
 
+                    parsedQueryString.Add("code", code.code);
+                    parsedQueryString.Add("state", code.state);
+                    string queryString = QueryString.Create(parsedQueryString).ToString();
+                    string redirectionUrl = uri.Scheme + "://" + uri.Host + uri.AbsolutePath + queryString;
 
-
+                    return RedirectPermanent(redirectionUrl);
+                }
+                else
+                {
+                    return RedirectToAction(actionName: "Index", controllerName: "Account");
+                }
             }
             else
             {
-
-            }
+                //          var k = _auth
 
             return RedirectToAction(actionName: "Index", controllerName: "Account");
         }

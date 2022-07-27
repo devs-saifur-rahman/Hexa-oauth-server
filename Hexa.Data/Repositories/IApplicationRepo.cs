@@ -17,7 +17,7 @@ namespace Hexa.Data.Repositories
 
         Task DeactivateApplicationAsync(int id);
         Task DeleteApplicationAsync(int id);
-
+        Task<ApplicationDetailsDTO> GetApplicationByClientId(string clientId);
         Task SaveChangesAsync();
 
     }

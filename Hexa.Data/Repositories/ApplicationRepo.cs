@@ -118,6 +118,17 @@ namespace Hexa.Data.Repositories
 
         }
 
+        public async Task<ApplicationDetailsDTO> GetApplicationByClientId(string clientId)
+        {
+            int appId = await _dbContext.ClientSecrets.Where(cls => cls.ClientID == clientId && cls.IsActive)
+                .AsNoTracking()
+                .Select(x => x.ApplicationID)
+                .FirstOrDefaultAsync();
+            
+            return await GetApplicationById(appId);
+        }
+
+
         public async Task<List<Application>> GetApplicationsAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

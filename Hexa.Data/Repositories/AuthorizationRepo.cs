@@ -15,42 +15,70 @@ namespace Hexa.Data.Repositories
         }
 
 
-        public Task<RepoResponse<Code>> GetAuthorizationCode(AuthRequest authRequest)
+        public async Task<CodeDTO> GetAuthorizationCode(int id)
         {
-            RepoResponse<Code> resp;
-
             try
             {
-                var a = (from secret in _dbContext.ClientSecrets
-                         join application in _dbContext.Applications on secret.ApplicationID equals application.ApplicationID
-                         where secret.ClientID == authRequest.client_id
-                         select secret).AsNoTracking();
-
-
-
-                resp = new AuthResponse<Code>
-                {
-                    success = true,
-                    message = "",
-                    data = new Code
+                var authResponse = await _dbContext.AuthorizationRequests
+                    .Join(_dbContext.Applications, atr => atr.ApplicationID, app => app.ApplicationID, (atr, app) => new
                     {
-                        code = "Not Implemented",
-                        state = authRequest.state
-                    }
+                        ApplicationID = app.ApplicationID,
+                        Name = app.Name,
+                        AuthorizationRequestId = atr.AuthorizationRequestId,
+                        ApplicationState = atr.ApplicationState,
+                        UserId = atr.UserId
+                    })
+                    .Join(_dbContext.RedirectURIs, a => a.ApplicationID, r => r.ApplicationID, (a, r) => new
+                    {
+
+                        Name = a.Name,
+                        AuthorizationRequestId = a.AuthorizationRequestId,
+                        RedirectUrl = r.URI,
+                        ApplicationState = a.ApplicationState,
+                        UserId = a.UserId,
+                        ApplicationID = a.ApplicationID,
+                        code = new Guid().ToString() + a.UserId 
+                    })
+                    .Where(x => x.AuthorizationRequestId == id)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+                /// ///+ "." + a.UserId + "-" + a.ApplicationID + "@oauth.v2.hexa.auth.server"
+
+                if (authResponse == null)
+                {
+                    throw new Exception("Corresponding request not found.");
+                }
+
+                AuthCode authCode = new AuthCode
+                {
+                    Code = authResponse.code,
+                    IsActive = true,
+                    IsAuthenticated = true,
+                    ApplicationID = authResponse.ApplicationID,
+                    UserId = authResponse.UserId
                 };
 
+                _dbContext.AuthCodes.Add(authCode);
+
+                await SaveChanges();
+
+                CodeDTO resp = new CodeDTO
+                {
+                    code = authCode.Code,
+                    state = authResponse.ApplicationState,
+                    success = true,
+                    redirect_url = authResponse.RedirectUrl
+                };
+
+                return resp;
             }
 
             catch (Exception ex)
             {
-                resp = new RepoResponse<Code>
-                {
-                    success = false,
-                    message = ex.Message
-                };
+                throw ex;
             }
 
-            return Task.FromResult(resp);
+
         }
 
         public async Task<BearerToken> GetBearerToken(TokenRequest tokenRequest)
@@ -118,33 +146,6 @@ namespace Hexa.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-
-
-        public Task<RepoResponse<Application>> GetApplicationByClientId(string clientId)
-        {
-
-
-            List<Application> application = (from apps in _dbContext.Applications
-                                             join clscrt in _dbContext.ClientSecrets on apps.ApplicationID equals clscrt.ApplicationID
-                                             where clscrt.ClientID == clientId
-                                             select apps
-                                       ).AsNoTracking().ToList<Application>();
-            if (application.Count != 1)
-            {
-                throw new Exception("Data issue - client id violation");
-            }
-
-            RepoResponse<Application> resp;
-
-            resp = new RepoResponse<Application>
-            {
-                success = true,
-                message = "",
-                data = application[0]
-            };
-            return Task.FromResult(resp);
-        }
-
         public Task<RepoResponse<List<Scope>>> GetApplicationScopes(string clientId, List<string> scopeList)
         {
 
@@ -172,6 +173,13 @@ namespace Hexa.Data.Repositories
                 data = scopes
             };
             return Task.FromResult(resp);
+        }
+
+        public async Task<AuthorizationRequest> SaveAuthorizationRequest(AuthorizationRequest authRequest)
+        {
+            await _dbContext.AuthorizationRequests.AddAsync(authRequest);
+            await SaveChanges();
+            return authRequest;
         }
     }
 }

@@ -26,9 +26,9 @@ namespace Hexa.Web.Data
             }
 
             var scps = new Scope[] {
-                      new Scope{Name="Scope Name 1", Description="Scope Description 1", Tag="sc1"},
-                      new Scope{Name="Scope Name 2", Description="Scope Description 2", Tag="sc2"},
-                      new Scope{Name="Scope Name 3", Description="Scope Description 3", Tag="sc3"},
+                      new Scope{Name="Scope_Name_1", Description="Scope Description 1", Tag="sc1"},
+                      new Scope{Name="Scope_Name_2", Description="Scope Description 2", Tag="sc2"},
+                      new Scope{Name="Scope_Name_3", Description="Scope Description 3", Tag="sc3"},
             };
             foreach (var scp in scps)
             {
