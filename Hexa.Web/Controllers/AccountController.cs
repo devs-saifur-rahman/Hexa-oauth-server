@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Web;
 using AutoMapper;
+using Microsoft.Extensions.Primitives;
 
 namespace Hexa.Web.Controllers
 {
@@ -26,10 +27,10 @@ namespace Hexa.Web.Controllers
         private readonly IAccountRepo _accRepo;
         private readonly IMapper _mapper;
 
-        public AccountController(AppDbContext dbContext, 
+        public AccountController(AppDbContext dbContext,
             IHttpContextAccessor httpContextAccessor,
             IAuthorizationRepo authRepo,
-            IAccountRepo accRepo, 
+            IAccountRepo accRepo,
             IMapper mapper)
         {
             _dbContext = dbContext;
@@ -224,6 +225,26 @@ namespace Hexa.Web.Controllers
 
             return RedirectToAction(actionName: "Index", controllerName: "Account");
         }
+
+        [HttpGet("api/v1/auth/token/access")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateAccessToken(TokenRequest tokenRequest)
+        {
+            var tokenResponse = await _authRepo.GetBearerToken(tokenRequest);
+
+
+            return Ok(tokenResponse);
+        }
+
+        [HttpGet("api/v1/auth/token/refresh")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefreshToken(string hasAllowed)
+        {
+
+
+            return RedirectToAction(actionName: "Index", controllerName: "Account");
+        }
+
         #endregion
 
     }

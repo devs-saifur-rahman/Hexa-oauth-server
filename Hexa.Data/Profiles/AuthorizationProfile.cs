@@ -9,7 +9,7 @@ namespace Hexa.Api.Profiles
         public AuthorizationProfile()
         {
             // Source -> Target
-            CreateMap<AccessToken, Token>();
+            CreateMap<AccessToken, BearerToken>();
             CreateMap<AuthRequest, ClientSecret>();
             CreateMap<TokenRequest, ClientSecret>();
             CreateMap<Scope,ScopeDTO>();
