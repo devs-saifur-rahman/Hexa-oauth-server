@@ -151,7 +151,7 @@ namespace Hexa.Web.Controllers
 
         //[HttpGet("oauth/v2/auth")]
         //public IActionResult Authorize()
-        [HttpGet("oauth/v2/auth")]
+        [HttpGet("oauth/v2/authorize")]
         [Authorize]
         public async Task<IActionResult> Authorize(string response_type, string client_id, string redirect_uri, string scope, string? state)
         {
@@ -174,7 +174,7 @@ namespace Hexa.Web.Controllers
             scope='sc1 sc2'
             state='state1'	
                 to generate this 
-            //https://localhost:7190/oauth/v2/auth?response_type=authorization_grant&client_id=some.local-1@hexa.sec&redirect_uri=https%3A%2F%2Fsaggoogle.com&scope=Scope_Name_1 Scope_Name_2&state=state1
+            //https://localhost:7190/oauth/v2/authorize?response_type=authorization_grant&client_id=some.local-1@hexa.sec&redirect_uri=https%3A%2F%2Fsaggoogle.com&scope=Scope_Name_1%20Scope_Name_2&state=state1
             */
 
             AuthRequest reqModel = new AuthRequest
@@ -239,7 +239,7 @@ namespace Hexa.Web.Controllers
             return View("Authorize", authorizePromptDTO);
         }
 
-        [HttpPost("oauth/v2/auth")]
+        [HttpPost("oauth/v2/authorize")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AcceptAuthorize(string authorizationRequestID, string hasAllowed)
         {
@@ -272,20 +272,37 @@ namespace Hexa.Web.Controllers
             {
                 //          var k = _auth
 
-            return RedirectToAction(actionName: "Index", controllerName: "Account");
+                return RedirectToAction(actionName: "Index", controllerName: "Account");
+            }
         }
 
-        [HttpGet("api/v1/auth/token/access")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GenerateAccessToken(TokenRequest tokenRequest)
+        [HttpGet("oauth/v2/token")]
+        public async Task<IActionResult> GenerateAccessToken( string grant_type, string code, string redirect_uri, string client_id, string client_secret)
         {
+
+            TokenRequest tokenRequest = new TokenRequest { 
+                grant_type = grant_type,
+                code = code,
+                redirect_uri   = redirect_uri,
+                client_id = client_id,
+                client_secret = client_secret
+            };
+            /*
+              https://localhost:7190/
+         oauth/v2/token/access?
+            grant_type=authorization_code&  
+            code=AUTH_CODE_HERE&
+            redirect_uri=REDIRECT_URI&
+            client_id=CLIENT_ID&
+            client_secret=CLIENT_SECRET
+               https://localhost:7190/oauth/v2/token?grant_type=authorization_code&code=00000000-0000-0000-0000-0000000000003&redirect_uri='https://saggoogle.com'&client_id=some.local-1@hexa.sec&client_secret=BADorGu7Ax05j8moM+1etXdQHAsSc5+x1
+             */
+
             var tokenResponse = await _authRepo.GetBearerToken(tokenRequest);
-
-
             return Ok(tokenResponse);
         }
 
-        [HttpGet("api/v1/auth/token/refresh")]
+        [HttpGet("oauth/v2/refreshtoken")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RefreshToken(string hasAllowed)
         {

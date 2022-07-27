@@ -22,7 +22,7 @@ namespace Hexa.Data.Repositories
 
             try
             {
-                var userExists = await _dbContext.Users.Where(query => query.Email.Equals(userEmail)).FirstOrDefaultAsync() == null;
+                var userExists = await _dbContext.Users.Where(query => query.Email.Equals(userEmail)).FirstAsync() == null;
 
                 resp = new RepoResponse<bool>
                 {

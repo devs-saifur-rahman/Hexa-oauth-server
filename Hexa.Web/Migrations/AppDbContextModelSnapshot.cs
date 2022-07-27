@@ -62,7 +62,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AccessTokens");
+                    b.ToTable("AccessTokens", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.Application", b =>
@@ -94,7 +94,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasKey("ApplicationID");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.ApplicationScope", b =>
@@ -112,7 +112,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasIndex("ScopeId");
 
-                    b.ToTable("ApplicationScopes");
+                    b.ToTable("ApplicationScopes", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.AuthCode", b =>
@@ -145,7 +145,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AuthCodes");
+                    b.ToTable("AuthCodes", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.AuthorizationRequest", b =>
@@ -190,7 +190,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AuthorizationRequests");
+                    b.ToTable("AuthorizationRequests", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.ClientSecret", b =>
@@ -219,7 +219,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasIndex("ApplicationID");
 
-                    b.ToTable("ClientSecrets");
+                    b.ToTable("ClientSecrets", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.GrantType", b =>
@@ -244,7 +244,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasIndex("GrantTypeid");
 
-                    b.ToTable("GrantTypes");
+                    b.ToTable("GrantTypes", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.RedirectURI", b =>
@@ -269,7 +269,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasIndex("ApplicationID");
 
-                    b.ToTable("RedirectURIs");
+                    b.ToTable("RedirectURIs", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.Scope", b =>
@@ -294,7 +294,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasKey("ScopeId");
 
-                    b.ToTable("Scopes");
+                    b.ToTable("Scopes", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.User", b =>
@@ -330,7 +330,7 @@ namespace Hexa.Web.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Hexa.Data.Models.oauth.AccessToken", b =>

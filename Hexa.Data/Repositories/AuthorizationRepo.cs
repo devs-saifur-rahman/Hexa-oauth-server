@@ -60,7 +60,7 @@ namespace Hexa.Data.Repositories
 
                 _dbContext.AuthCodes.Add(authCode);
 
-                await SaveChanges();
+                await SaveChangesAsync();
 
                 CodeDTO resp = new CodeDTO
                 {
@@ -86,11 +86,11 @@ namespace Hexa.Data.Repositories
             BearerToken resp;
             try
             {
-                AuthCode a = (AuthCode)(from codes in _dbContext.AuthCodes
+                AuthCode a =await (from codes in _dbContext.AuthCodes
                                         join apps in _dbContext.Applications on codes.ApplicationID equals apps.ApplicationID
                                         where codes.IsActive == true && codes.Code == tokenRequest.code
                                         select codes
-                    ).AsNoTracking();
+                    ).AsNoTracking().FirstOrDefaultAsync();
 
                 //get and validate the code 
                 //get application scope
@@ -106,7 +106,7 @@ namespace Hexa.Data.Repositories
                     RefreshToken = token,
                     IsActive = true,
                     UserId = a.UserId,
-                    ApplicatonId = a.ApplicationID
+                    ApplicationId = a.ApplicationID
                 };
 
                 await _dbContext.AccessTokens.AddAsync(accessToken);
@@ -120,7 +120,7 @@ namespace Hexa.Data.Repositories
                         appId = ascp.ApplicationId,
                         name = scp.Name
                     })
-                    .Where(x => x.appId == accessToken.AccessTokenId)
+                    .Where(x => x.appId == accessToken.ApplicationId)
                     .Select(y=>y.name)
                     .AsNoTracking().ToListAsync();
 
@@ -178,7 +178,7 @@ namespace Hexa.Data.Repositories
         public async Task<AuthorizationRequest> SaveAuthorizationRequest(AuthorizationRequest authRequest)
         {
             await _dbContext.AuthorizationRequests.AddAsync(authRequest);
-            await SaveChanges();
+            await SaveChangesAsync();
             return authRequest;
         }
     }
