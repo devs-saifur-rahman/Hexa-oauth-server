@@ -230,7 +230,7 @@ namespace Hexa.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateAccessToken(TokenRequest tokenRequest)
         {
-            var tokenResponse = await _authRepo.GetAccessToken(tokenRequest);
+            var tokenResponse = await _authRepo.GetBearerToken(tokenRequest);
 
 
             return Ok(tokenResponse);

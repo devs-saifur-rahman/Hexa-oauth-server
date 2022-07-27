@@ -53,15 +53,15 @@ namespace Hexa.Data.Repositories
             return Task.FromResult(resp);
         }
 
-        public async Task<Token> GetAccessToken(TokenRequest tokenRequest)
+        public async Task<BearerToken> GetBearerToken(TokenRequest tokenRequest)
         {
-            Token resp;
+            BearerToken resp;
             try
             {
                 AuthCode a = (AuthCode)(from codes in _dbContext.AuthCodes
-                         join apps in _dbContext.Applications on codes.ApplicationID equals apps.ApplicationID
-                         where codes.IsActive == true && codes.Code == tokenRequest.code
-                         select codes
+                                        join apps in _dbContext.Applications on codes.ApplicationID equals apps.ApplicationID
+                                        where codes.IsActive == true && codes.Code == tokenRequest.code
+                                        select codes
                     ).AsNoTracking();
 
                 //get and validate the code 
@@ -69,13 +69,38 @@ namespace Hexa.Data.Repositories
                 //generate access token & a refresh token (may be phase 2)
                 //store the userId,Application id, access token and refresh token
 
-                string accessToken = Guid.NewGuid().ToString();
+                string token = Guid.NewGuid().ToString();
 
-                resp = new Token
+
+                AccessToken accessToken = new AccessToken
                 {
-                    access_token = accessToken,
+                    Token = token,
+                    RefreshToken = token,
+                    IsActive = true,
+                    UserId = a.UserId,
+                    ApplicatonId = a.ApplicationID
+                };
+
+                await _dbContext.AccessTokens.AddAsync(accessToken);
+                await SaveChangesAsync();
+
+                var tokenId = accessToken.AccessTokenId;
+
+                List<string> scopeList = await _dbContext.ApplicationScopes
+                    .Join(_dbContext.Scopes, ascp => ascp.ScopeId, scp => scp.ScopeId, (ascp, scp) => new
+                    {
+                        appId = ascp.ApplicationId,
+                        name = scp.Name
+                    })
+                    .Where(x => x.appId == accessToken.AccessTokenId)
+                    .Select(y=>y.name)
+                    .AsNoTracking().ToListAsync();
+
+                resp = new BearerToken
+                {
+                    access_token = accessToken.Token,
                     token_type = "Bearer",
-                    scope = "scope1 scope2"
+                    scope = String.Join(" ", scopeList)
                 };
 
             }
@@ -88,7 +113,7 @@ namespace Hexa.Data.Repositories
             return resp;
         }
 
-        public async Task SaveChanges()
+        public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
         }
